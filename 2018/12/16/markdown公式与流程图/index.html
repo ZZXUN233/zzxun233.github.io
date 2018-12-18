@@ -87,12 +87,10 @@
 <meta property="og:site_name" content="ZhangThree&#39;s Blog!">
 <meta property="og:description" content="什么是MarkdownMarkdown 是一种方便记忆、书写的纯文本标记语言，用户可以使用这些标记符号以最小的输入代价生成极富表现力的文档：譬如您正在阅读的这份文档。它使用简单的符号标记不同的标题，分割不同的段落，粗体或者斜体某些文字，更棒的是，它还可以:">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://www.plantuml.com/plantuml/svg/XP0z2y8m48Rt_8gZanzaS2qkKWSBJY8uXpQqXybTQ5ABgF_TrhQAuCUMbpptt8S868o6dJOg89ClqNcGa1ZbFQnH5PMoGeYipuqs1gc0Ym2OfnJWW9HpuxjuOinXozbnN-erSpMPYjjOk7Ag2bPJ6FA6Qw-7TyBMrZIcNZZsQpL2FBikhxBz8_dInP1IgIiCYZBz0HpS_x37E5-WQ171JDPEGcGLdQDXmhXpE_RONUq7tQtmpju1">
-<meta property="og:updated_time" content="2018-12-18T10:30:18.932Z">
+<meta property="og:updated_time" content="2018-12-18T11:11:12.530Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="markdown的一系列扩展支持">
 <meta name="twitter:description" content="什么是MarkdownMarkdown 是一种方便记忆、书写的纯文本标记语言，用户可以使用这些标记符号以最小的输入代价生成极富表现力的文档：譬如您正在阅读的这份文档。它使用简单的符号标记不同的标题，分割不同的段落，粗体或者斜体某些文字，更棒的是，它还可以:">
-<meta name="twitter:image" content="http://www.plantuml.com/plantuml/svg/XP0z2y8m48Rt_8gZanzaS2qkKWSBJY8uXpQqXybTQ5ABgF_TrhQAuCUMbpptt8S868o6dJOg89ClqNcGa1ZbFQnH5PMoGeYipuqs1gc0Ym2OfnJWW9HpuxjuOinXozbnN-erSpMPYjjOk7Ag2bPJ6FA6Qw-7TyBMrZIcNZZsQpL2FBikhxBz8_dInP1IgIiCYZBz0HpS_x37E5-WQ171JDPEGcGLdQDXmhXpE_RONUq7tQtmpju1">
 
 
 
@@ -393,22 +391,30 @@
 <li style="list-style: none"><input type="checkbox" checked> 修复 LaTex 公式渲染问题</li>
 <li style="list-style: none"><input type="checkbox" checked> 新增 LaTex 公式编号功能</li>
 </ul>
-<h1 id="流程图示例"><a href="#流程图示例" class="headerlink" title="流程图示例"></a>流程图示例</h1><p>安装插件：<strong>hexo-filter-flowchart</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install --save hexo-filter-flowchart</span><br></pre></td></tr></table></figure>
-<div id="flowchart-0" class="flow-chart"></div>
-
-<h1 id="时序图示例"><a href="#时序图示例" class="headerlink" title="时序图示例"></a>时序图示例</h1><p>安装插件：<strong>hexo-filter-sequence</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install --save hexo-filter-sequence</span><br></pre></td></tr></table></figure>
-<div id="sequence-0"></div>
-
-<h1 id="UML示例"><a href="#UML示例" class="headerlink" title="UML示例"></a>UML示例</h1><p>安装插件： <strong>hexo-tag-plantuml</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-tag-plantuml --save</span><br></pre></td></tr></table></figure>
-<p><a href="https://www.planttext.com/" target="_blank" rel="noopener"><strong>在线调试网站</strong></a></p>
-<img src="http://www.plantuml.com/plantuml/svg/XP0z2y8m48Rt_8gZanzaS2qkKWSBJY8uXpQqXybTQ5ABgF_TrhQAuCUMbpptt8S868o6dJOg89ClqNcGa1ZbFQnH5PMoGeYipuqs1gc0Ym2OfnJWW9HpuxjuOinXozbnN-erSpMPYjjOk7Ag2bPJ6FA6Qw-7TyBMrZIcNZZsQpL2FBikhxBz8_dInP1IgIiCYZBz0HpS_x37E5-WQ171JDPEGcGLdQDXmhXpE_RONUq7tQtmpju1">
-<h1 id="甘特图示例"><a href="#甘特图示例" class="headerlink" title="甘特图示例"></a>甘特图示例</h1><p>安装插件： <strong>hexo-tag-mermaid</strong></p>
+<h1 id="流程图示例"><a href="#流程图示例" class="headerlink" title="流程图示例"></a>流程图示例</h1><p><del>安装插件：<strong>hexo-filter-flowchart</strong></del><br><del>npm install –save hexo-filter-flowchart</del></p>
+<p>安装插件： <strong>hexo-tag-mermaid</strong></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install --save hexo-tag-mermaid</span><br></pre></td></tr></table></figure>
 <p>注意在Next主题下使用这个插件，需要在 <strong>themes\next\layout_custom\header.swig</strong> 文件中添加</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>  <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.css"</span> <span class="attr">type</span>=<span class="string">"text/css"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<div class="mermaid">
+  graph TD
+    A[Christmas] -->|Get money| B(Go shopping)
+    B --> C{Let me think}
+    C -->|One| D[Laptop]
+    C -->|Two| E[iPhone]
+    C -->|Three| F[Car]
+</div>
+
+<h1 id="时序图示例"><a href="#时序图示例" class="headerlink" title="时序图示例"></a>时序图示例</h1><p><del>安装插件：<strong>hexo-filter-sequence</strong> 部署出问题</del><br><del>npm install –save hexo-filter-sequence</del><br>安装插件： <strong>hexo-tag-mermaid</strong></p>
+<div class="mermaid">
+  sequenceDiagram
+    participant John
+    participant Alice
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+</div>
+
+<h1 id="甘特图示例"><a href="#甘特图示例" class="headerlink" title="甘特图示例"></a>甘特图示例</h1><p>安装插件： <strong>hexo-tag-mermaid</strong></p>
 <p><a href="https://mermaidjs.github.io/" target="_blank" rel="noopener">语法参考</a></p>
 <div class="mermaid">
   gantt
@@ -460,20 +466,12 @@
 
 </div>
  –&gt;
-<hr>
-<p>最后希望自己以后少写点废话，多学点和多写点有用的东西！<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script><textarea id="flowchart-0-code" style="display: none">st=>start: Start
-io=>inputoutput: verification
-op=>operation: Your Operation
-cond=>condition: Yes or No?
-sub=>subroutine: Your Subroutine
-e=>end
-
-st->io->op->cond
-cond(yes)->e
-cond(no)->sub->io</textarea><textarea id="flowchart-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script><script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.27/webfontloader.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script><textarea id="sequence-0-code" style="display: none">Alice->Bob: Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!<textarea id="sequence-0-options" style="display: none">{"theme":"simple","scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("sequence-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-0-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-0", options);</script><p></p>
-
+<h1 id="UML示例"><a href="#UML示例" class="headerlink" title="UML示例"></a>UML示例</h1><p>安装插件： <strong>hexo-tag-plantuml</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-tag-plantuml --save</span><br></pre></td></tr></table></figure>
+<p><a href="https://www.planttext.com/"><strong>在线调试网站</strong></a></p>
+<img  src=http://www.plantuml.com/plantuml/svg/XP0z2y8m48Rt_8gZanzaS2qkKWSBJY8uXpQqXybTQ5ABgF_TrhQAuCUMbpptt8S868o6dJOg89ClqNcGa1ZbFQnH5PMoGeYipuqs1gc0Ym2OfnJWW9HpuxjuOinXozbnN-erSpMPYjjOk7Ag2bPJ6FA6Qw-7TyBMrZIcNZZsQpL2FBikhxBz8_dInP1IgIiCYZBz0HpS_x37E5-WQ171JDPEGcGLdQDXmhXpE_RONUq7tQtmpju1>
+<p>最后希望自己以后少写点废话，多学点和多写点有用的东西！</p>
+-->
       
     </div>
     
@@ -650,7 +648,7 @@ Bob-->Alice: I am good thanks!<textarea id="sequence-0-options" style="display: 
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本功能"><span class="nav-number">1.</span> <span class="nav-text">基本功能</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数学公式的插入"><span class="nav-number">2.</span> <span class="nav-text">数学公式的插入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#todo-列表"><span class="nav-number">3.</span> <span class="nav-text">todo 列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#流程图示例"><span class="nav-number">4.</span> <span class="nav-text">流程图示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#时序图示例"><span class="nav-number">5.</span> <span class="nav-text">时序图示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UML示例"><span class="nav-number">6.</span> <span class="nav-text">UML示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#甘特图示例"><span class="nav-number">7.</span> <span class="nav-text">甘特图示例</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基本功能"><span class="nav-number">1.</span> <span class="nav-text">基本功能</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数学公式的插入"><span class="nav-number">2.</span> <span class="nav-text">数学公式的插入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#todo-列表"><span class="nav-number">3.</span> <span class="nav-text">todo 列表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#流程图示例"><span class="nav-number">4.</span> <span class="nav-text">流程图示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#时序图示例"><span class="nav-number">5.</span> <span class="nav-text">时序图示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#甘特图示例"><span class="nav-number">6.</span> <span class="nav-text">甘特图示例</span></a></li></ol></div>
             
 
           </div>

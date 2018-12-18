@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Python,Python枚举,Enum,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="枚举类型Python中一切皆是对象。from enum import Enum# 枚举的实质作用是给一组变量编号class BookType(Enum):    English = 1    English_plus = 1    Chinese = 2    Physics = 3    Chemistry = 4    def __init__(self, num):        self.">
+<meta name="keywords" content="Python,Python枚举,Enum">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python的高级语法和用法1.0">
+<meta property="og:url" content="https://zzxunoo.github.io/2018/08/12/Python的高级语法和用法/index.html">
+<meta property="og:site_name" content="ZhangThree&#39;s Blog!">
+<meta property="og:description" content="枚举类型Python中一切皆是对象。from enum import Enum# 枚举的实质作用是给一组变量编号class BookType(Enum):    English = 1    English_plus = 1    Chinese = 2    Physics = 3    Chemistry = 4    def __init__(self, num):        self.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-05T12:55:42.746Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python的高级语法和用法1.0">
+<meta name="twitter:description" content="枚举类型Python中一切皆是对象。from enum import Enum# 枚举的实质作用是给一组变量编号class BookType(Enum):    English = 1    English_plus = 1    Chinese = 2    Physics = 3    Chemistry = 4    def __init__(self, num):        self.">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zzxunoo.github.io/2018/08/12/Python的高级语法和用法/">
+
+
+
+
+
+  <title>Python的高级语法和用法1.0 | ZhangThree's Blog!</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?071b25a2baf9f91041b166e422279b98";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhangThree's Blog!</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">nothing but something!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.js"></script> 
+<link rel="stylesheet" href="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.css" type="text/css">
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zzxunoo.github.io/2018/08/12/Python的高级语法和用法/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZhangThree">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhangThree's Blog!">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Python的高级语法和用法1.0</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-12T04:21:14+08:00">
+                2018-08-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/编程/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/08/12/Python的高级语法和用法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/08/12/Python的高级语法和用法/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="枚举类型"><a href="#枚举类型" class="headerlink" title="枚举类型"></a>枚举类型</h2><p>Python中一切皆是对象。<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> enum <span class="keyword">import</span> Enum</span><br><span class="line"></span><br><span class="line"><span class="comment"># 枚举的实质作用是给一组变量编号</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BookType</span><span class="params">(Enum)</span>:</span></span><br><span class="line">    English = <span class="number">1</span></span><br><span class="line">    English_plus = <span class="number">1</span></span><br><span class="line">    Chinese = <span class="number">2</span></span><br><span class="line">    Physics = <span class="number">3</span></span><br><span class="line">    Chemistry = <span class="number">4</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, num)</span>:</span></span><br><span class="line">        self.num = num</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 这样Book就是一个枚举</span></span><br><span class="line">book_type = BookType(<span class="number">1</span>)</span><br><span class="line">print(BookType.English)</span><br><span class="line">print(BookType.English.value)</span><br><span class="line">print(BookType.English.name)</span><br><span class="line">print(BookType[<span class="string">"English"</span>])</span><br><span class="line">print(BookType[<span class="string">"English_plus"</span>] == BookType[<span class="string">"English"</span>])</span><br><span class="line">print(<span class="string">"----------------------"</span>)</span><br><span class="line">print(book_type.English)</span><br><span class="line">print(<span class="string">"----------------------"</span>)</span><br><span class="line"><span class="keyword">for</span> b <span class="keyword">in</span> BookType:</span><br><span class="line">    print(b)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 打印的结果如下</span></span><br><span class="line"><span class="comment"># BookType.English</span></span><br><span class="line"><span class="comment"># 1</span></span><br><span class="line"><span class="comment"># English</span></span><br><span class="line"><span class="comment"># BookType.English</span></span><br><span class="line"><span class="comment"># True</span></span><br><span class="line"><span class="comment"># ----------------------</span></span><br><span class="line"><span class="comment"># BookType.English</span></span><br><span class="line"><span class="comment"># ----------------------</span></span><br><span class="line"><span class="comment"># BookType.English</span></span><br><span class="line"><span class="comment"># BookType.Math</span></span><br><span class="line"><span class="comment"># BookType.Chinese</span></span><br><span class="line"><span class="comment"># BookType.Physics</span></span><br><span class="line"><span class="comment"># BookType.Chemistry</span></span><br></pre></td></tr></table></figure></p>
+<p>假如我们要判断一本书的类型是什么书，用枚举就可以避免去判断书名Book.Name是否为”English”，而是判断其BookType的属性值。</p>
+<p>如果我们不用枚举，也可用用字典来表示种类。BookType = {“English”:1,”Chinese”:2,…}，同样可以用一个普通类来表示。<br>但是问题出在：这两种方式定义的类型对应的类型值是可以被改变的，而且可能出现重复定义类型。</p>
+<h3 id="枚举的特点"><a href="#枚举的特点" class="headerlink" title="枚举的特点"></a>枚举的特点</h3><p>在枚举类中:</p>
+<blockquote>
+<ol>
+<li><strong> 标签是唯一存在的。</strong> 就是指:[English,Chinese,Physics,Chemistry]相当于是集合，不允许有重复的元素出现。</li>
+<li><strong> 同时，枚举类定义后，其中的类型不可以在外部被更改</strong>（不能通过BookType.English = 2来修改）。</li>
+<li>枚举变量的访问方式有多种，BookType.English、BookType[“English”]都可以获取。</li>
+<li>值得注意的是，。添加构造函数后同样可以被实例化为对象，但这样操作意义不大，使用到枚举类时对半需要用其来充当一种类似全局变量的作用，用来分类某些数据或是对象</li>
+<li>同个枚举类之间可以进行等值比较，BookType.English==BookType.English，返回True，但是BookType.English==1 返回False，甚至枚举变量的value也不可以进行大小比较，只能在同个枚举类之间进行等值比较。</li>
+<li>枚举类中可以存在类型名不同，但是类型值相同的变量，比如English_Plus = 1可以被定义在BookType中，但是它只能充当一个English的别名。在遍历中别名不会被遍历到，优先视第一个作为原版。如果遍历的语句改为 for b in BookType.<strong>members</strong>时就可以遍历到别名。</li>
+</ol>
+</blockquote>
+<h3 id="一些补充"><a href="#一些补充" class="headerlink" title="一些补充"></a>一些补充</h3><ol>
+<li>当存储枚举类型到数据库中时，优先存储枚举类型对应的特定数值，而不是存储类型的名称字段，这样做更加简洁，占用空间也小。同时也会遇到一些问题，当我们从数据库中取到对应的类型的value，怎么和类型对应起来？<blockquote>
+<p>这个很简单，我们可以直接用枚举类来作为类型转换使用，比如查询到一个数据的类型value为number，要知道它对应哪个类，我们只需要用BookType(number)，这样就可以知道它对应得类，<strong> 所以前面给BookType添加构造方法的做法是无效的。</strong>Python默认继承Enum的枚举类构造函数只能有一个参数。</p>
+</blockquote>
+</li>
+<li>继承Enum的枚举类中，类型的value是可以为str类型的，如果需要使用只能为Int类型的枚举类，就需要引入新的继承类IntEnum，同样是from enum import IntEnum来引入，继承于这个类，数据项的value必须为Int类型。</li>
+</ol>
+<p><strong> 明天继续：函数式编程、闭包，看一次能写多少就写多少，留在这里自己忘了可以及时查询</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+            <a href="/tags/Python枚举/" rel="tag"># Python枚举</a>
+          
+            <a href="/tags/Enum/" rel="tag"># Enum</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/08/python中with的实现机制/" rel="next" title="python中with的实现机制">
+                <i class="fa fa-chevron-left"></i> python中with的实现机制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/12/Python高级语法和用法/" rel="prev" title="Python高级语法和用法2.0">
+                Python高级语法和用法2.0 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="ZhangThree">
+            
+              <p class="site-author-name" itemprop="name">ZhangThree</p>
+              <p class="site-description motion-element" itemprop="description">nothing but something!</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#枚举类型"><span class="nav-number">1.</span> <span class="nav-text">枚举类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#枚举的特点"><span class="nav-number">1.1.</span> <span class="nav-text">枚举的特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一些补充"><span class="nav-number">1.2.</span> <span class="nav-text">一些补充</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhangThree</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'lzVD2DmFMAf3meHzqf7QUXwt-gzGzoHsz',
+        appKey: 'mcrt5cERhqrcI0fAEssexaIk',
+        placeholder: 'Nice to see you!',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

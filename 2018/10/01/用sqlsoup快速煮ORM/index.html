@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="快速ORM,sqlsoup,sqlalchemy,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="ORMwiki说：  Object-relational mapping (ORM, O/RM, and O/R mapping tool) in computer science is a programming technique for converting data between incompatible type systems using object-oriented progra">
+<meta name="keywords" content="快速ORM,sqlsoup,sqlalchemy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQLAlchemy以及SqlSoup">
+<meta property="og:url" content="https://zzxunoo.github.io/2018/10/01/用sqlsoup快速煮ORM/index.html">
+<meta property="og:site_name" content="ZhangThree&#39;s Blog!">
+<meta property="og:description" content="ORMwiki说：  Object-relational mapping (ORM, O/RM, and O/R mapping tool) in computer science is a programming technique for converting data between incompatible type systems using object-oriented progra">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zzxunoo.github.io/2018/10/01/用sqlsoup快速煮ORM/sqlite_db.png">
+<meta property="og:updated_time" content="2018-11-05T12:56:01.321Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SQLAlchemy以及SqlSoup">
+<meta name="twitter:description" content="ORMwiki说：  Object-relational mapping (ORM, O/RM, and O/R mapping tool) in computer science is a programming technique for converting data between incompatible type systems using object-oriented progra">
+<meta name="twitter:image" content="https://zzxunoo.github.io/2018/10/01/用sqlsoup快速煮ORM/sqlite_db.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zzxunoo.github.io/2018/10/01/用sqlsoup快速煮ORM/">
+
+
+
+
+
+  <title>SQLAlchemy以及SqlSoup | ZhangThree's Blog!</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?071b25a2baf9f91041b166e422279b98";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhangThree's Blog!</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">nothing but something!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.js"></script> 
+<link rel="stylesheet" href="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.css" type="text/css">
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zzxunoo.github.io/2018/10/01/用sqlsoup快速煮ORM/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZhangThree">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhangThree's Blog!">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SQLAlchemy以及SqlSoup</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-01T18:31:06+08:00">
+                2018-10-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/编程/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/10/01/用sqlsoup快速煮ORM/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/10/01/用sqlsoup快速煮ORM/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="ORM"><a href="#ORM" class="headerlink" title="ORM"></a>ORM</h1><p>wiki说：</p>
+<blockquote>
+<p>Object-relational mapping (ORM, O/RM, and O/R mapping tool) in computer science is a programming technique for converting data between incompatible type systems using object-oriented programming languages. This creates, in effect, a “virtual object database” that can be used from within the programming language. There are both free and commercial packages available that perform object-relational mapping, although some programmers opt to construct their own ORM tools.</p>
+</blockquote>
+<p>我发现高手都是直接用的Sql语句操作数据库（高效直接），不过我讨厌的点在于以string的形式在一个程序中嵌入一些sql语句，看着好别扭啊！同时修改起来很不方便，总是会定义一堆乱七八糟的变量名来标识数据库中的字段！烦得很！所以我是这么说服我自己使用ORM（成为菜鸟）的！用多了这个sql语句就基本忘记了！</p>
+<a id="more"></a>
+<h1 id="SQLAlchemy"><a href="#SQLAlchemy" class="headerlink" title="SQLAlchemy"></a>SQLAlchemy</h1><p>这玩样的官网在这：<br><a href="https://www.sqlalchemy.org/" target="_blank" rel="noopener">sqlalchemy的 官网</a></p>
+<p>名词解释：</p>
+<blockquote>
+<p>Alchemy: 炼金术，炼丹术（炼金术士：The Alchemist）</p>
+</blockquote>
+<p>SQLAlchemy 是 Python SQL 工具包和对象关系映射器，它为应用程序开发人员提供了SQL的全部功能和灵活性。<br>它提供了一整套众所周知的企业级持久性模式，旨在实现高效，高性能的数据库访问，并采用简单的Pythonic域语言。</p>
+<p>它确实很好用：</p>
+<ul>
+<li>高度封装</li>
+<li>适配多种数据库</li>
+<li>成熟，高性能</li>
+<li>可模块拓展</li>
+<li><a href="https://www.sqlalchemy.org/features.html" target="_blank" rel="noopener">详情点这里</a></li>
+</ul>
+<p>使用经验：真正使用这个是在做一个flask项目中用到的flask-sqlalchemy，举几个小例子：</p>
+<h2 id="定义一张存放书籍的表（一个书籍的类）"><a href="#定义一张存放书籍的表（一个书籍的类）" class="headerlink" title="定义一张存放书籍的表（一个书籍的类）"></a>定义一张存放书籍的表（一个书籍的类）</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Column, String</span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Integer</span><br><span class="line"><span class="keyword">from</span> app.models.base <span class="keyword">import</span> Base</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Book</span><span class="params">(Base)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">        一些属性定义重复性比较大，元类可以解决这个问题</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    __tablename__ = <span class="string">'book'</span></span><br><span class="line"></span><br><span class="line">    id = Column(Integer, primary_key=<span class="keyword">True</span>, autoincrement=<span class="keyword">True</span>)</span><br><span class="line">    title = Column(String(<span class="number">50</span>), nullable=<span class="keyword">False</span>)</span><br><span class="line">    _author = Column(<span class="string">'author'</span>, String(<span class="number">30</span>), default=<span class="string">'未名'</span>)</span><br><span class="line">    binding = Column(String(<span class="number">20</span>))</span><br><span class="line">    publisher = Column(String(<span class="number">50</span>))</span><br><span class="line">    price = Column(String(<span class="number">20</span>))</span><br><span class="line">    pages = Column(Integer)</span><br><span class="line">    pubdate = Column(String(<span class="number">20</span>))</span><br><span class="line">    isbn = Column(String(<span class="number">15</span>), nullable=<span class="keyword">False</span>, unique=<span class="keyword">True</span>)</span><br><span class="line">    summary = Column(String(<span class="number">1000</span>))</span><br><span class="line">    image = Column(String(<span class="number">50</span>))</span><br></pre></td></tr></table></figure>
+<h2 id="实现数据的假删除"><a href="#实现数据的假删除" class="headerlink" title="实现数据的假删除"></a>实现数据的假删除</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Column, Integer, SmallInteger</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> current_app</span><br><span class="line"><span class="keyword">from</span> flask_sqlalchemy <span class="keyword">import</span> SQLAlchemy <span class="keyword">as</span> _SQLAlchemy, BaseQuery</span><br><span class="line"></span><br><span class="line">db = SQLAlchemy()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span><span class="params">(db.Model)</span>:</span></span><br><span class="line">    __abstract__ = <span class="keyword">True</span></span><br><span class="line">    create_time = Column(<span class="string">'create_time'</span>, Integer)</span><br><span class="line">    status = Column(SmallInteger, default=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.create_time = int(datetime.now().timestamp())</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">create_datetime</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.create_time:</span><br><span class="line">            <span class="keyword">return</span> datetime.fromtimestamp(self.create_time)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.status = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">set_attrs</span><span class="params">(self, attrs)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> key, value <span class="keyword">in</span> attrs.items():</span><br><span class="line">            <span class="keyword">if</span> hasattr(self, key) <span class="keyword">and</span> key != <span class="string">'id'</span>:</span><br><span class="line">                setattr(self, key, value)</span><br></pre></td></tr></table></figure>
+<p>所有的表都要有假删除对应的标志，如果每个表都去添加这么个标志字段就会做很多重复的工作，这个时候可以发现前面写的Book类是继承于一个Base父类的，上面我给出了Base类的实现，Base类中status字段就是用来标志假删除用的，为1就是存在状态，为0就是删除状态。<br>set_attrs方法是用作批量赋值使用的，delete方法就是假删除的功能实现。</p>
+<h2 id="定义自己的查找"><a href="#定义自己的查找" class="headerlink" title="定义自己的查找"></a>定义自己的查找</h2><h3 id="考虑到假删除后的查找"><a href="#考虑到假删除后的查找" class="headerlink" title="考虑到假删除后的查找"></a>考虑到假删除后的查找</h3><p>我们前面定义了自己的数据假删除规范，现在每次查找数据自然就要避开被假删除后的数据，对于Book的查找中，我们可以进行多个字段的筛选，相当于在sql语句中WHERE后添加一个判断条件status等于1。<br>SqlAlchemy中调用Query类中的filter_by()方法进行查找。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">books = Book.query.filter_by(title=<span class="string">'追风筝的人'</span>,status=<span class="number">1</span>).all()</span><br></pre></td></tr></table></figure>
+<p>每次查询都要加入status的判断，很无聊，注意此处的query是个类，而filter_by是query下的方法，具体的实现可以自己查看源码。<br>默认情况下query这个类会调用SqlAlchemy提供的BaseQuery这个类，而BaseQuery又是继承于orm.Query这个类的，orm就是SqlAlchemy的两大组件之一的ORM。</p>
+<p>SQLAlchemy的两大组件：</p>
+<ul>
+<li>Core<blockquote>
+<p>Core本身就是一个功能齐全的SQL抽象工具包，它为各种DBAPI实现和行为提供了一个平滑的抽象层，以及一个允许通过生成Python表达式表达SQL语言的SQL表达式语言。 可以发出DDL语句以及内省现有模式的模式表示系统，以及允许将Python类型映射到数据库类型的类型系统，使系统更加完善。</p>
+</blockquote>
+</li>
+<li>ORM<blockquote>
+<p>对象关系映射器是一个基于Core构建的可选包。 许多应用程序都是严格在Core上构建的，使用SQL表达式系统提供对数据库交互的简洁和精确控制。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="自定义的Query继承类"><a href="#自定义的Query继承类" class="headerlink" title="自定义的Query继承类"></a>自定义的Query继承类</h3><p><strong>我们只能在原有的BaseQuery继承类上做些手脚</strong><br>在下面这个继承于BaseQuery类的自定义类中，我们对它的filter_by方法做了一些手脚，手脚的内容很简单，就是在查找中如果没有指明是否是假删除的数据，我们默认查找status=1就是没有被假删除的数据，这样就省去了每次查找都要再次筛选没有被假删除的数据！</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> flask_sqlalchemy <span class="keyword">import</span> BaseQuery</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Query</span><span class="params">(BaseQuery)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">filter_by</span><span class="params">(self, **kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> <span class="string">'status'</span> <span class="keyword">not</span> <span class="keyword">in</span> kwargs.keys():</span><br><span class="line">            kwargs[<span class="string">'status'</span>] = <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> super(Query, self).filter_by(**kwargs)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">db = SQLAlchemy(query_class=Query)</span><br></pre></td></tr></table></figure>
+<h2 id="用上下文管理器来自动递交事务"><a href="#用上下文管理器来自动递交事务" class="headerlink" title="用上下文管理器来自动递交事务"></a>用上下文管理器来自动递交事务</h2><p>记得在使用SQLAlchemy的过程中，每次修改数据后总是要做事务的手动提交。<br>下面是一部分示例代码：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">form = RegisterForm(request.form)</span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span> <span class="keyword">and</span> form.validate():    <span class="comment"># 表单校验通过后</span></span><br><span class="line">        user = User()                                   <span class="comment"># 创建对象</span></span><br><span class="line">        user.set_attrs(form.data)                       <span class="comment"># 从表单向对象传参数</span></span><br><span class="line">        db.session.add(user)                            <span class="comment"># 添加对数据库操作的事务</span></span><br><span class="line">        db.session.commit()                             <span class="comment"># 提交事务</span></span><br></pre></td></tr></table></figure>
+<p>事务在数据库中很重要，我就不说了，总之用户一次事务如果提交失败要直接回到数据修改前的状态才是正确的做法。</p>
+<p>怎么简写db.session这几句代码呢？要能想到Python的上下文管理器，简单说就是with。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> contextlib <span class="keyword">import</span> contextmanager</span><br><span class="line"><span class="keyword">from</span> flask_sqlalchemy <span class="keyword">import</span> SQLAlchemy <span class="keyword">as</span> _SQLAlchemy, BaseQuery</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SQLAlchemy</span><span class="params">(_SQLAlchemy)</span>:</span></span><br><span class="line"><span class="meta">    @contextmanager</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">auto_commit</span><span class="params">(self, throw=True)</span>:</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">yield</span></span><br><span class="line">            self.session.commit()</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            self.session.rollback()</span><br><span class="line">            current_app.logger.exception(<span class="string">'%r'</span> % e)</span><br><span class="line">            <span class="keyword">if</span> throw:</span><br><span class="line">                <span class="keyword">raise</span> e</span><br></pre></td></tr></table></figure>
+<p>注意这里使用了contextlib提供的上下文管理器装饰器，而不是按照之前的方式去重新实现SQLAlchemy这个类的<strong>enter</strong>和<strong>exit</strong>这两个魔法方法，因为后者是直接将这个类变成了可以被上下文管理器处理的一个类，而我们实际上只希望这个类中自动递交事务这个方法被上下文管理器所管理。沃日，感觉写到这里又要去讲这个上下文管理器了甚至要讲这个yield关键字的使用了。。。<br>auto_commit的使用。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">form = RegisterForm(request.form)</span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span> <span class="keyword">and</span> form.validate():        <span class="comment"># 表单校验通过后</span></span><br><span class="line">        <span class="keyword">with</span> db.auto_commit():                              <span class="comment"># 使用上下文管理器来管理数据库操作</span></span><br><span class="line">            user = User()                                   <span class="comment"># 创建对象</span></span><br><span class="line">            user.set_attrs(form.data)                       <span class="comment"># 从表单向对象传参数</span></span><br></pre></td></tr></table></figure>
+<p>虽然代码没有多少改变和优化，不过我觉得上下文管理器用在在这里确实是一个很好的选择。就像操作文件用with open这样可以省去关闭文件对象的操作，而此处就是省去了手动提交事务的操作。</p>
+<p>本来下面的内容才是今天想写的，但是前面提了这么多。</p>
+<h2 id="一个小问题"><a href="#一个小问题" class="headerlink" title="一个小问题"></a>一个小问题</h2><p>有没有更高效的创建数据库的方法，同时操作这些数据库又能以Object(对象)来操作，而不是用各种字符串的sql语句。这就引出了下面这个库的使用！</p>
+<blockquote>
+<p>我们现在要创建ORM映射后的数据库，必须先定义一个对象类，再根据这个类去生成一个表。尽管在MVC中model包括了数据模型和与模型相关的一系列操作，这样封装在一个类中刚好。但仍然存在某些情况我们仅仅做一些简单的数据存储操作，而又定义一堆的类真的有些多余，我认为，实际上我们定义类只是希望在程序中操作起数据库来更方便。我认为创建数据最快的方式还是设计好数据库后，直接在可视化工具比如 Navicat 上操作，不过可能创建很多时需要人为去点也不好。不考虑建库效率这个因素，假如我们连接了一个没有进行ORM映射的已有数据库，要对其进行Object操作怎么办呢！</p>
+</blockquote>
+<h1 id="SqlSoup"><a href="#SqlSoup" class="headerlink" title="SqlSoup"></a>SqlSoup</h1><blockquote>
+<p>SQLSoup是一个基于SQLAlchemy对象关系映射器构建的一步式数据库访问工具。</p>
+</blockquote>
+<p><a href="https://sqlsoup.readthedocs.io/en/latest/" target="_blank" rel="noopener">sqlsoup的官方文档</a></p>
+<h2 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h2><p>我所操作的数据库如下：<br><img src="/2018/10/01/用sqlsoup快速煮ORM/sqlite_db.png"></p>
+<h3 id="借助SQLAlchemy连接本地sqlite数据库"><a href="#借助SQLAlchemy连接本地sqlite数据库" class="headerlink" title="借助SQLAlchemy连接本地sqlite数据库"></a>借助SQLAlchemy连接本地sqlite数据库</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> sqlalchemy</span><br><span class="line"><span class="keyword">import</span> sqlsoup</span><br><span class="line"><span class="keyword">import</span> create_engine</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">create_engine(<span class="string">'sqlite:///test.db'</span>)</span><br><span class="line">db = sqlsoup.SQLSoup(engine)</span><br><span class="line"></span><br><span class="line">books = db.book.all()       <span class="comment"># 获取所有的书籍记录</span></span><br><span class="line">print(books[<span class="number">2</span>])</span><br><span class="line"><span class="comment">#MappedBook(id=3,title='Python学习手册',price='89.0',isbn='9787111267768 ')</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">findPythonBooks</span><span class="params">(book)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> hasattr(book,<span class="string">'title'</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">True</span> <span class="keyword">if</span> <span class="string">'python'</span> <span class="keyword">in</span> book.title.lower() <span class="keyword">else</span> <span class="keyword">False</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line">pythonBooks = filter(findPythonBooks,books)</span><br><span class="line">print(list(pythonBooks))    <span class="comment"># 可以看到书名中带python关键字的记录都被查出来了</span></span><br><span class="line"><span class="comment">#[MappedBook(id=2,title='Python for Unix and Linux System Administration',price='49.99',isbn='9780596515829'), MappedBook(id=3,title='Python学习 手册',price='89.0',isbn='9787111267768 '), MappedBook(id=4,title='Python源码剖析',price='69.8',isbn='9787121068744 ')]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># orm了同样可以进行一些特定的orm查询操作</span></span><br><span class="line">net_book = db.book.filter_by(title=<span class="string">'计算机网络'</span>).one()</span><br><span class="line">print(net_book)</span><br><span class="line"><span class="comment"># MappedBook(id=1,title='计算机网络',price='66',isbn='9787111165057 ')</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/快速ORM/" rel="tag"># 快速ORM</a>
+          
+            <a href="/tags/sqlsoup/" rel="tag"># sqlsoup</a>
+          
+            <a href="/tags/sqlalchemy/" rel="tag"># sqlalchemy</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/28/进制转换/" rel="next" title="递归实现进制转换">
+                <i class="fa fa-chevron-left"></i> 递归实现进制转换
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/05/leetcode1/" rel="prev" title="leetCode最“简单”一题">
+                leetCode最“简单”一题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="ZhangThree">
+            
+              <p class="site-author-name" itemprop="name">ZhangThree</p>
+              <p class="site-description motion-element" itemprop="description">nothing but something!</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ORM"><span class="nav-number">1.</span> <span class="nav-text">ORM</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SQLAlchemy"><span class="nav-number">2.</span> <span class="nav-text">SQLAlchemy</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义一张存放书籍的表（一个书籍的类）"><span class="nav-number">2.1.</span> <span class="nav-text">定义一张存放书籍的表（一个书籍的类）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现数据的假删除"><span class="nav-number">2.2.</span> <span class="nav-text">实现数据的假删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#定义自己的查找"><span class="nav-number">2.3.</span> <span class="nav-text">定义自己的查找</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#考虑到假删除后的查找"><span class="nav-number">2.3.1.</span> <span class="nav-text">考虑到假删除后的查找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义的Query继承类"><span class="nav-number">2.3.2.</span> <span class="nav-text">自定义的Query继承类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用上下文管理器来自动递交事务"><span class="nav-number">2.4.</span> <span class="nav-text">用上下文管理器来自动递交事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一个小问题"><span class="nav-number">2.5.</span> <span class="nav-text">一个小问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SqlSoup"><span class="nav-number">3.</span> <span class="nav-text">SqlSoup</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用示例"><span class="nav-number">3.1.</span> <span class="nav-text">使用示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#借助SQLAlchemy连接本地sqlite数据库"><span class="nav-number">3.1.1.</span> <span class="nav-text">借助SQLAlchemy连接本地sqlite数据库</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhangThree</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'lzVD2DmFMAf3meHzqf7QUXwt-gzGzoHsz',
+        appKey: 'mcrt5cERhqrcI0fAEssexaIk',
+        placeholder: 'Nice to see you!',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

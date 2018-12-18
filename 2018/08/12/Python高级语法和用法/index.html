@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Python,闭包,函数式编程的皮毛,高阶函数(map,reduce,filter),">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="闭包 闭包是个很高大上的定义。闭包是函数式编程的一种实现手段。  闭包 = 函数+环境变量（这里的环境变量就能充当一个全局变量使用） 闭包的使用可以减少全局变量的使用，从而怎加函数的封闭性 闭包不是非用不可，Python支持闭包，但是闭包的使用不合理容易造成内存泄漏 在Python中使用闭包时需要明确知道变量的各种作用域，同时理解global和nolocal的用法   应用小场景：旅行者，一个旅行">
+<meta name="keywords" content="Python,闭包,函数式编程的皮毛,高阶函数(map,reduce,filter)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python高级语法和用法2.0">
+<meta property="og:url" content="https://zzxunoo.github.io/2018/08/12/Python高级语法和用法/index.html">
+<meta property="og:site_name" content="ZhangThree&#39;s Blog!">
+<meta property="og:description" content="闭包 闭包是个很高大上的定义。闭包是函数式编程的一种实现手段。  闭包 = 函数+环境变量（这里的环境变量就能充当一个全局变量使用） 闭包的使用可以减少全局变量的使用，从而怎加函数的封闭性 闭包不是非用不可，Python支持闭包，但是闭包的使用不合理容易造成内存泄漏 在Python中使用闭包时需要明确知道变量的各种作用域，同时理解global和nolocal的用法   应用小场景：旅行者，一个旅行">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-05T12:55:43.687Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python高级语法和用法2.0">
+<meta name="twitter:description" content="闭包 闭包是个很高大上的定义。闭包是函数式编程的一种实现手段。  闭包 = 函数+环境变量（这里的环境变量就能充当一个全局变量使用） 闭包的使用可以减少全局变量的使用，从而怎加函数的封闭性 闭包不是非用不可，Python支持闭包，但是闭包的使用不合理容易造成内存泄漏 在Python中使用闭包时需要明确知道变量的各种作用域，同时理解global和nolocal的用法   应用小场景：旅行者，一个旅行">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zzxunoo.github.io/2018/08/12/Python高级语法和用法/">
+
+
+
+
+
+  <title>Python高级语法和用法2.0 | ZhangThree's Blog!</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?071b25a2baf9f91041b166e422279b98";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhangThree's Blog!</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">nothing but something!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.js"></script> 
+<link rel="stylesheet" href="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.css" type="text/css">
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zzxunoo.github.io/2018/08/12/Python高级语法和用法/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZhangThree">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhangThree's Blog!">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Python高级语法和用法2.0</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-12T22:58:44+08:00">
+                2018-08-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/编程/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/08/12/Python高级语法和用法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/08/12/Python高级语法和用法/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><blockquote>
+<p>闭包是个很高大上的定义。闭包是函数式编程的一种实现手段。</p>
+<ol>
+<li>闭包 = 函数+环境变量（这里的环境变量就能充当一个全局变量使用）</li>
+<li>闭包的使用可以减少全局变量的使用，从而怎加函数的封闭性</li>
+<li>闭包不是非用不可，Python支持闭包，但是闭包的使用不合理容易造成内存泄漏</li>
+<li>在Python中使用闭包时需要明确知道变量的各种作用域，同时理解<strong>global</strong>和<strong>nolocal</strong>的用法</li>
+</ol>
+</blockquote>
+<p>应用小场景：旅行者，一个旅行者每天接着前一天的路程上走一定的路程，编程来表示旅行者每次行进后走过的总路程。</p>
+<ol>
+<li>非函数式编程，使用全局变量来记录总路程，每次调用函数就操作全局变量<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">pos = <span class="number">0</span>     <span class="comment">#起点</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">move</span><span class="params">(length)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> pos      <span class="comment">#使用全局变量</span></span><br><span class="line">    pos += length</span><br><span class="line">    <span class="keyword">return</span> pos</span><br><span class="line"></span><br><span class="line">print(move(<span class="number">2</span>))</span><br><span class="line">print(move(<span class="number">3</span>))</span><br><span class="line">print(move(<span class="number">7</span>))</span><br><span class="line">print(pos)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<blockquote>
+<p>运行结果：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">2</span><br><span class="line">5</span><br><span class="line">12</span><br><span class="line">12  <span class="comment"># pos用作全局变量，值被改变了</span></span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<ol start="2">
+<li>函数式编程，使用闭包，将路程当作环境变量，移动的操作当作函数。<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">pos = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">start</span><span class="params">(pos)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">move</span><span class="params">(length)</span>:</span></span><br><span class="line">        nolocal pos</span><br><span class="line">        new_pos = pos + length</span><br><span class="line">        pos = new_pos</span><br><span class="line">        <span class="keyword">return</span> pos</span><br><span class="line">    <span class="keyword">return</span> move</span><br><span class="line"></span><br><span class="line">tourist = start(pos)    <span class="comment"># 之前的pos被当作参数使用，这样做的好处是pos的值不会被改变</span></span><br><span class="line">print(tourist(<span class="number">2</span>))</span><br><span class="line">print(tourist(<span class="number">3</span>))</span><br><span class="line">print(tourist(<span class="number">7</span>))</span><br><span class="line">print(pos)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<a id="more"></a>
+<blockquote>
+<p>运行结果：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">2</span><br><span class="line">5</span><br><span class="line">12</span><br><span class="line">0   <span class="comment">#可以看到非函数式编程下，pos被作为全局变量，值被改变了</span></span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>也可以像这样写：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">start</span><span class="params">()</span>:</span></span><br><span class="line">    pos = <span class="number">0</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">move</span><span class="params">(length)</span>:</span></span><br><span class="line">        <span class="keyword">nonlocal</span> pos</span><br><span class="line">        new_pos = pos + length</span><br><span class="line">        pos = new_pos</span><br><span class="line">        <span class="keyword">return</span> pos</span><br><span class="line">    <span class="keyword">return</span> move</span><br><span class="line"></span><br><span class="line">tourist = start()    <span class="comment"># 这次就看不到函数外有任何变量来记录总路程</span></span><br><span class="line">print(tourist(<span class="number">2</span>))</span><br><span class="line">print(tourist(<span class="number">3</span>))</span><br><span class="line">print(tourist(<span class="number">7</span>))</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>运行结果：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">2</span><br><span class="line">5</span><br><span class="line">12</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>这次pos就作为局部变量在函数内部。编程中要尽量减少全局变量的使用，避免多处修改全局变量，全局变量尽量用作一个类的属性，通过类的关系来约束全局变量，这样做的好处在于减少程序运行中某个数据的状态不确定性，避免程序出现莫名其妙的bug！（个人观点）</p>
+<h2 id="lambda"><a href="#lambda" class="headerlink" title="lambda"></a>lambda</h2><blockquote>
+<ol>
+<li>lambda表达式是Python中的匿名函数</li>
+<li>lambda只能用作表达式函数的定义</li>
+<li>lambda 配合在下面几个函数中可以发挥最大优势<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">func1 = <span class="keyword">lambda</span> x:x**(<span class="number">1</span>/<span class="number">2</span>)</span><br><span class="line">func2 = <span class="keyword">lambda</span> x:x*func2(x<span class="number">-1</span>) <span class="keyword">if</span> x&gt;=<span class="number">1</span> <span class="keyword">else</span> <span class="number">1</span></span><br><span class="line">print(func1(<span class="number">5</span>))</span><br><span class="line">print(func1(<span class="number">4</span>))</span><br><span class="line"></span><br><span class="line">print(func2(<span class="number">5</span>))</span><br><span class="line">print(func2(<span class="number">4</span>))</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>运行结果：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">2.23606797749979</span><br><span class="line">2.0</span><br><span class="line">120</span><br><span class="line">24</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>func1就是一个简单的开平方根函数，func2就比较有趣了，是一个递归求解正整数阶乘的函数<strong>(一行代码求阶乘！)</strong>。虽然说是匿名函数，但是可以看到函数其实还是有一个名字的，而且正常使用中这个名字还要有别于变量名，避免和普通变量混淆，其实lambda表达式的主要用途还是在下面的高阶函数中。</p>
+<h2 id="map"><a href="#map" class="headerlink" title="map"></a>map</h2><blockquote>
+<ol>
+<li>for循环的简写版本</li>
+<li>“映射函数”，对一个或多个系列中的元素逐一执行某函数的操作</li>
+<li>map和lambda都不能提高代码的运行效率，只能增加代码简洁性</li>
+<li>map传入多个列表作为参数时，map会自动截取相同长度的列表进行映射计算。</li>
+</ol>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">lis1 = [i <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>)]</span><br><span class="line">lis2 = [i <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">8</span>)]</span><br><span class="line">mul_list = map(<span class="keyword">lambda</span> x,y:x*y,lis1,lis2)</span><br><span class="line">print(type(mul_list))</span><br><span class="line">print(list(mul_list))</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>运行结果：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&lt;class <span class="string">'map'</span>&gt;</span><br><span class="line">[0, 1, 4, 9, 16, 25, 36, 49]</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>两个长度不一的列表元素互相相乘得到的结果中元素的个数与短列表的元素个数一致。</p>
+<h2 id="reduce"><a href="#reduce" class="headerlink" title="reduce"></a>reduce</h2><blockquote>
+<ol>
+<li>map后并整合结果</li>
+<li>同样是映射型函数调用，但只返回一个结果</li>
+<li>映射到的函数中，必须接收两个参数<br>一个实例，求1/1-1/3+1/5-1/7+1/9-….<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> reduce</span><br><span class="line"></span><br><span class="line">lis_num = [i <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">100000</span>)]</span><br><span class="line">result = reduce(<span class="keyword">lambda</span> x,y :x<span class="number">-1</span>/(<span class="number">2</span>*y+<span class="number">1</span>) <span class="keyword">if</span> y%<span class="number">2</span>!=<span class="number">0</span> <span class="keyword">else</span> x+<span class="number">1</span>/(<span class="number">2</span>*y+<span class="number">1</span>),lis_num,<span class="number">1</span>)</span><br><span class="line">print(result*<span class="number">4</span>)</span><br><span class="line">print(<span class="string">"--------"</span>)</span><br><span class="line">print(math.pi)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>运行结果：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">3.1415826535897198</span><br><span class="line">--------</span><br><span class="line">3.141592653589793</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<h2 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h2><blockquote>
+<ol>
+<li>过滤器</li>
+<li>也是映射型的函数调用，用于筛选列表元素</li>
+<li>filter中的函数用作筛选条件，只有列表元素经函数后返回值为True才能通过筛选，留在返回结果中</li>
+</ol>
+</blockquote>
+<p>例如筛选出0~1000内的所有素数：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">num_lis = [i <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1001</span>)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ifDiv</span><span class="params">(num)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> num &lt;= <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">True</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, round(num/<span class="number">2</span>**<span class="number">0.5</span>)):</span><br><span class="line">            <span class="keyword">if</span> num % i == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">True</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result_lis = filter(ifDiv, num_lis)</span><br><span class="line">print(list(result_lis))</span><br><span class="line"><span class="comment"># 结果就不放这里了，这里ifDiv这个函数不便用lambda表达式定义了</span></span><br></pre></td></tr></table></figure></p>
+<p><strong> 还有一些装饰器的内容下次记录了，这些内容多数是听七月老师的课后记录的笔记 </strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+            <a href="/tags/闭包/" rel="tag"># 闭包</a>
+          
+            <a href="/tags/函数式编程的皮毛/" rel="tag"># 函数式编程的皮毛</a>
+          
+            <a href="/tags/高阶函数-map-reduce-filter/" rel="tag"># 高阶函数(map,reduce,filter)</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/12/Python的高级语法和用法/" rel="next" title="Python的高级语法和用法1.0">
+                <i class="fa fa-chevron-left"></i> Python的高级语法和用法1.0
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/13/python高级语法与用法3-0/" rel="prev" title="python高级语法与用法3.0">
+                python高级语法与用法3.0 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="ZhangThree">
+            
+              <p class="site-author-name" itemprop="name">ZhangThree</p>
+              <p class="site-description motion-element" itemprop="description">nothing but something!</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#闭包"><span class="nav-number">1.</span> <span class="nav-text">闭包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lambda"><span class="nav-number">2.</span> <span class="nav-text">lambda</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#map"><span class="nav-number">3.</span> <span class="nav-text">map</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reduce"><span class="nav-number">4.</span> <span class="nav-text">reduce</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#filter"><span class="nav-number">5.</span> <span class="nav-text">filter</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhangThree</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'lzVD2DmFMAf3meHzqf7QUXwt-gzGzoHsz',
+        appKey: 'mcrt5cERhqrcI0fAEssexaIk',
+        placeholder: 'Nice to see you!',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

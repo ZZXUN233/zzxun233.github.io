@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Python,OpenCv,简单抠图,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="OpenCv简单的抠图 注意，此处的抠图和我们通常理解的“抠图”有很大的差异，这里的抠图只是 根据图像主体和图像背景之间的颜色差异将主体凸显出来 ，并没有像PS工具中哪样实现各种强大的抠图，OpenCv可以实现像Ps中的抠图，但是本次没有实现，这里做的仅是将一个背景全为白色（黑色同样也行）的图像中的主体抠出贴在别的图中。  具体就是用代码实现下面的流程：最后得出一个抠图并帖在另外一张图正中间的效果">
+<meta name="keywords" content="Python,OpenCv,简单抠图">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenCv简单的抠图操作">
+<meta property="og:url" content="https://zzxunoo.github.io/2018/07/18/OpenCv简单的抠图操作/index.html">
+<meta property="og:site_name" content="ZhangThree&#39;s Blog!">
+<meta property="og:description" content="OpenCv简单的抠图 注意，此处的抠图和我们通常理解的“抠图”有很大的差异，这里的抠图只是 根据图像主体和图像背景之间的颜色差异将主体凸显出来 ，并没有像PS工具中哪样实现各种强大的抠图，OpenCv可以实现像Ps中的抠图，但是本次没有实现，这里做的仅是将一个背景全为白色（黑色同样也行）的图像中的主体抠出贴在别的图中。  具体就是用代码实现下面的流程：最后得出一个抠图并帖在另外一张图正中间的效果">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zzxunoo.github.io/2018/07/18/OpenCv简单的抠图操作/step.png">
+<meta property="og:image" content="https://zzxunoo.github.io/2018/07/18/OpenCv简单的抠图操作/BGR.png">
+<meta property="og:image" content="https://zzxunoo.github.io/2018/07/18/OpenCv简单的抠图操作/colorRange.png">
+<meta property="og:image" content="https://zzxunoo.github.io/2018/07/18/OpenCv简单的抠图操作/logicOptions.png">
+<meta property="og:image" content="https://zzxunoo.github.io/2018/07/18/OpenCv简单的抠图操作/1.png">
+<meta property="og:image" content="https://zzxunoo.github.io/2018/07/18/OpenCv简单的抠图操作/logo.jpg">
+<meta property="og:image" content="https://zzxunoo.github.io/2018/07/18/OpenCv简单的抠图操作/op1.png">
+<meta property="og:image" content="https://zzxunoo.github.io/2018/07/18/OpenCv简单的抠图操作/op2.png">
+<meta property="og:updated_time" content="2018-12-06T10:56:29.594Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenCv简单的抠图操作">
+<meta name="twitter:description" content="OpenCv简单的抠图 注意，此处的抠图和我们通常理解的“抠图”有很大的差异，这里的抠图只是 根据图像主体和图像背景之间的颜色差异将主体凸显出来 ，并没有像PS工具中哪样实现各种强大的抠图，OpenCv可以实现像Ps中的抠图，但是本次没有实现，这里做的仅是将一个背景全为白色（黑色同样也行）的图像中的主体抠出贴在别的图中。  具体就是用代码实现下面的流程：最后得出一个抠图并帖在另外一张图正中间的效果">
+<meta name="twitter:image" content="https://zzxunoo.github.io/2018/07/18/OpenCv简单的抠图操作/step.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zzxunoo.github.io/2018/07/18/OpenCv简单的抠图操作/">
+
+
+
+
+
+  <title>OpenCv简单的抠图操作 | ZhangThree's Blog!</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?071b25a2baf9f91041b166e422279b98";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhangThree's Blog!</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">nothing but something!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.js"></script> 
+<link rel="stylesheet" href="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.css" type="text/css">
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zzxunoo.github.io/2018/07/18/OpenCv简单的抠图操作/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZhangThree">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhangThree's Blog!">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenCv简单的抠图操作</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-18T04:53:40+08:00">
+                2018-07-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/编程/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/07/18/OpenCv简单的抠图操作/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/07/18/OpenCv简单的抠图操作/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="OpenCv简单的抠图"><a href="#OpenCv简单的抠图" class="headerlink" title="OpenCv简单的抠图"></a>OpenCv简单的抠图</h1><blockquote>
+<p>注意，此处的抠图和我们通常理解的“抠图”有很大的差异，这里的抠图只是<strong> 根据图像主体和图像背景之间的颜色差异将主体凸显出来 </strong>，并没有像PS工具中哪样实现各种强大的抠图，OpenCv可以实现像Ps中的抠图，但是本次没有实现，这里做的仅是将一个背景全为白色（黑色同样也行）的图像中的主体抠出贴在别的图中。</p>
+</blockquote>
+<p>具体就是用代码实现下面的流程：最后得出一个抠图并帖在另外一张图正中间的效果。<br><img src="/2018/07/18/OpenCv简单的抠图操作/step.png"><br><a id="more"></a><br>一般的图像本身是由像素点矩阵构成的，每个像素点其实就是(B, G, R)三个颜色的组合，注意这里不是按照我们常说的RGB的顺序排列的，是按照Blue,Green,Red,这样排列的。<br>opencv提供了BGR到RGB的转换方式(自己也可以写，就是交换一个三元组中前两元的位置)：</p>
+<p><code>cv2.cvtColor(pic, cv2.COLOR_BGR2RGB)</code></p>
+<p>如下：<br><img src="/2018/07/18/OpenCv简单的抠图操作/BGR.png"><br>这里有几个常识需要知道：</p>
+<ol>
+<li>灰色的图像就是B、G、R三个值相等时就显示为灰色，所以灰色在这里有0~255级<img src="/2018/07/18/OpenCv简单的抠图操作/colorRange.png"></li>
+<li>RBG光的三原色对应的数值可以用来做加减乘除的运算，但是在opencv中只能取[0~255]之间的整数，所以小于0算作0，大于255算作255就是opencv对图像的运算。</li>
+<li>出了基本运算外，还可以做逻辑运算(对应函数如下：)<img src="/2018/07/18/OpenCv简单的抠图操作/logicOptions.png"></li>
+</ol>
+<ul>
+<li>not</li>
+<li>and</li>
+<li>or</li>
+<li>xor</li>
+</ul>
+<p>具体操作后的效果以及操作的用途后面估计得花一次来细写，本次主要记录实现抠图并贴图的流程。</p>
+<img src="/2018/07/18/OpenCv简单的抠图操作/1.png" title="1.png">
+<img src="/2018/07/18/OpenCv简单的抠图操作/logo.jpg" title="logo.jpg">
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">img = cv2.imread(<span class="string">"imgs/1.png"</span>, cv2.IMREAD_COLOR)</span><br><span class="line">logo = cv2.imread(<span class="string">"imgs/logo.jpg"</span>, cv2.IMREAD_COLOR)</span><br><span class="line">imggray = cv2.cvtColor(logo, cv2.COLOR_BGR2GRAY)  <span class="comment">#灰度处理</span></span><br><span class="line">row, col = (img.shape[<span class="number">0</span>] - logo.shape[<span class="number">0</span>]) // <span class="number">2</span>, (img.shape[<span class="number">1</span>] - logo.shape[<span class="number">1</span>]) // <span class="number">2</span>  <span class="comment">#计算中间位置</span></span><br><span class="line">roi = img[row:row + logo.shape[<span class="number">0</span>], col:col + logo.shape[<span class="number">1</span>]]</span><br><span class="line">ret, mask = cv2.threshold(imggray, <span class="number">220</span>, <span class="number">255</span>, <span class="number">1</span>)     <span class="comment">#同Photoshop软件中的阈值处理</span></span><br><span class="line"><span class="comment"># 低于150的置为0，高于的置为255</span></span><br><span class="line">mash_inv = cv2.bitwise_not(mask)  <span class="comment"># 取反，黑白颠倒</span></span><br><span class="line">img1_bg = cv2.bitwise_and(roi, roi, mask=mash_inv)</span><br><span class="line">img2_fg = cv2.bitwise_and(logo, logo, mask=mask)</span><br><span class="line">dst = cv2.add(img1_bg, img2_fg)</span><br><span class="line">dst2 = img1_bg + img2_fg</span><br><span class="line">cv2.imshow(<span class="string">"dst2"</span>, dst2)</span><br><span class="line">img[row:row + logo.shape[<span class="number">0</span>], col:col + logo.shape[<span class="number">1</span>]] = dst</span><br><span class="line"></span><br><span class="line">cv2.imshow(<span class="string">"maked_img"</span>, img)</span><br><span class="line">cv2.waitKey(<span class="number">0</span>)</span><br><span class="line">cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+<p>进行本次操作的实现代码如上，可以根据这个写一个批量添加水印的程序，只需要改水印的最终放置位置和替换水印的文件logo.jpg,水印的位置摆放可以根据img.shape来计算，300<em>200像素的图像，imread后获得的就是numpy中np.array的一个300</em>200*3的矩阵，x轴对应300，y轴对应200，其中每个点又是BGR的3元组(class’tuple’)，所以img.shape = (300,200,3)，最后假设要将水印贴在最右下角，贴图的位置就是:需要加水印的图为imgSrc,水印为imgLogo</p>
+<ul>
+<li>xStart = imgSrc.shape[0] - imgLogo.shape[0]</li>
+<li>xEnd = imgSrc.shape[0]</li>
+<li>yStart = imgSrc.shape[1] - imgLogo.shape[1]</li>
+<li>yEnd = imgSrc.shape[1]</li>
+<li>imgSrc[xStart:xEnd,yStart:yEnd] = imgLogo   #最后的贴图操作</li>
+</ul>
+<h1 id="最后的一些总结"><a href="#最后的一些总结" class="headerlink" title="最后的一些总结"></a>最后的一些总结</h1><p>总结以下包括PS软件中的抠图思路主要有以下几种：</p>
+<ul>
+<li>根据颜色差别抠图（PS中的魔棒，快速选择工具，颜色范围等）对于色彩多样的区域就很难直接到达效果，还有通道抠图其实也是为了提取出颜色差异来。<img src="/2018/07/18/OpenCv简单的抠图操作/op1.png" title="使用模板直接选择图中的色块，颜色丰富的区域就达不到效果"></li>
+<li>根据边缘抠图（PS中的快速选择工具，套索工具，磁性套索等）<img src="/2018/07/18/OpenCv简单的抠图操作/op2.png" title="使用磁性套索快速识别图像的边缘">
+<strong>想用代码把这个老头从背景中扣出来我还做不到</strong></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+            <a href="/tags/OpenCv/" rel="tag"># OpenCv</a>
+          
+            <a href="/tags/简单抠图/" rel="tag"># 简单抠图</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/15/时势与英雄的故事《邪不压正》/" rel="next" title="时势与英雄的故事《邪不压正》">
+                <i class="fa fa-chevron-left"></i> 时势与英雄的故事《邪不压正》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/31/给你的信/" rel="prev" title="给你的信">
+                给你的信 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="ZhangThree">
+            
+              <p class="site-author-name" itemprop="name">ZhangThree</p>
+              <p class="site-description motion-element" itemprop="description">nothing but something!</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OpenCv简单的抠图"><span class="nav-number">1.</span> <span class="nav-text">OpenCv简单的抠图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最后的一些总结"><span class="nav-number">2.</span> <span class="nav-text">最后的一些总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhangThree</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'lzVD2DmFMAf3meHzqf7QUXwt-gzGzoHsz',
+        appKey: 'mcrt5cERhqrcI0fAEssexaIk',
+        placeholder: 'Nice to see you!',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

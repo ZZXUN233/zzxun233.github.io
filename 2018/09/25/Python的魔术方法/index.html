@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Python,Python魔术方法,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="什么是魔术方法定义在《流畅的Python》书中第一节就讲到了魔法方法：  不管在哪种框架下写程序，都会花费大量时间去实现那些会被框架本身调用的方法，Python也不例外。Python的解释器碰到特殊句法时，会使用特殊的方法去激活一些基本的对象操作，这些特殊方法的名字以两个下划线开头，以两个下划线结尾（例如__getitem__），例如obj[key]的背后就是__getitem__方法，为了能求得">
+<meta name="keywords" content="Python,Python魔术方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python的魔术方法">
+<meta property="og:url" content="https://zzxunoo.github.io/2018/09/25/Python的魔术方法/index.html">
+<meta property="og:site_name" content="ZhangThree&#39;s Blog!">
+<meta property="og:description" content="什么是魔术方法定义在《流畅的Python》书中第一节就讲到了魔法方法：  不管在哪种框架下写程序，都会花费大量时间去实现那些会被框架本身调用的方法，Python也不例外。Python的解释器碰到特殊句法时，会使用特殊的方法去激活一些基本的对象操作，这些特殊方法的名字以两个下划线开头，以两个下划线结尾（例如__getitem__），例如obj[key]的背后就是__getitem__方法，为了能求得">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-05T12:55:43.081Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Python的魔术方法">
+<meta name="twitter:description" content="什么是魔术方法定义在《流畅的Python》书中第一节就讲到了魔法方法：  不管在哪种框架下写程序，都会花费大量时间去实现那些会被框架本身调用的方法，Python也不例外。Python的解释器碰到特殊句法时，会使用特殊的方法去激活一些基本的对象操作，这些特殊方法的名字以两个下划线开头，以两个下划线结尾（例如__getitem__），例如obj[key]的背后就是__getitem__方法，为了能求得">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zzxunoo.github.io/2018/09/25/Python的魔术方法/">
+
+
+
+
+
+  <title>Python的魔术方法 | ZhangThree's Blog!</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?071b25a2baf9f91041b166e422279b98";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhangThree's Blog!</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">nothing but something!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.js"></script> 
+<link rel="stylesheet" href="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.css" type="text/css">
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zzxunoo.github.io/2018/09/25/Python的魔术方法/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZhangThree">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhangThree's Blog!">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Python的魔术方法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-25T21:15:07+08:00">
+                2018-09-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/编程/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/09/25/Python的魔术方法/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/09/25/Python的魔术方法/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="什么是魔术方法"><a href="#什么是魔术方法" class="headerlink" title="什么是魔术方法"></a>什么是魔术方法</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>在《流畅的Python》书中第一节就讲到了魔法方法：</p>
+<blockquote>
+<p>不管在哪种框架下写程序，都会花费大量时间去实现那些会被框架本身调用的方法，Python也不例外。Python的解释器碰到特殊句法时，会使用特殊的方法去激活一些基本的对象操作，这些特殊方法的名字以两个下划线开头，以两个下划线结尾（例如__getitem__），例如obj[key]的背后就是__getitem__方法，为了能求得my_collection[key]的值，解释器实际上会调用my_collection.__getitem__(key)。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="功能描述"><a href="#功能描述" class="headerlink" title="功能描述"></a>功能描述</h2><p>这些特殊方法能让你自己的对象实现和支持以下的语言架构，并与之交互：</p>
+<ul>
+<li>迭代</li>
+<li>集合类</li>
+<li>属性访问</li>
+<li>运算符重载</li>
+<li>函数和方法的调用</li>
+<li>对象的创建和销毁</li>
+<li>字符表示形式和格式化</li>
+<li>管理上下文（with块的实现）</li>
+</ul>
+<h2 id="命名规范"><a href="#命名规范" class="headerlink" title="命名规范"></a>命名规范</h2><blockquote>
+<p>魔术方法 (magic method) 是特殊方法的昵称。形如__getitem__的普遍说法是读作“双下-getitem”（dunder-getitem）这样称呼，因此特殊方法也被叫做双下方法。</p>
+</blockquote>
+<h1 id="常用的魔术方法和其调用规则"><a href="#常用的魔术方法和其调用规则" class="headerlink" title="常用的魔术方法和其调用规则"></a>常用的魔术方法和其调用规则</h1><p><strong> 首先明确一点，魔法方法的存在是为了让解释器调用的，你自己并不需要调用它们。 </strong></p>
+<h2 id="len"><a href="#len" class="headerlink" title="__len__"></a>__len__</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">mylist = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">print(len(mylist))</span><br><span class="line">print(mylist.__len__())</span><br></pre></td></tr></table></figure>
+<p>刚接触python时会发现获取一个系列对象（列表，元组，字典）的元素个数时可以有两种选择len(x)或x.__len__() ，看书后才知道，我们在对一个对象使用len()这个内置函数时，其实上就是在调用这个对象的__len__魔法方法，如果这个对象内部没有继承或是实现__len__这个魔法方法，那么直接调用len()就会报错。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">"你竟然对我使用len()方法!"</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>    <span class="comment">#注意在重写__len__方法时一定要有int类型的返回值</span></span><br><span class="line"></span><br><span class="line">a = A()</span><br><span class="line">b = B()</span><br><span class="line">len(a)</span><br><span class="line">len(B)</span><br></pre></td></tr></table></figure>
+<p>如果还知道一些其它的语言，比如lua语言，lua中获取一个表的元素个数时会用到#table_name，此处#号运算符和python中的len()函数作用就是一样的。</p>
+<h2 id="init"><a href="#init" class="headerlink" title="__init__"></a>__init__</h2><p><strong> 这被默认为Python中类的构造函数，但其实它并不是，它只能说是一个初始化方法！ </strong></p>
+<p>Python中真正的构造函数是<strong> __new__ </strong>，__new__是个类方法，因为作为魔法方法被定义，所以不用使用@classmethod装饰器。而且在__new__方法中必须返回一个实例。它返回的实例会作为第一个参数self，传到__init__(self,*args,**kw)中再进行对象的初始化，__init__中默认返回一个类的实例对象。</p>
+<p>书中关于Python构建对象的过程给出了下面很有Python风格的<strong> 伪代码 </strong>概括：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">object_maker</span><span class="params">(the_class,some_arg)</span>:</span></span><br><span class="line">    new_object = the_class.__new__(some_arg)</span><br><span class="line">    <span class="keyword">if</span> isinstance(new_object,the_class):</span><br><span class="line">        the_class.__init__(new_object,some_arg)</span><br><span class="line">    <span class="keyword">return</span> new_object</span><br><span class="line"></span><br><span class="line"><span class="comment"># 有了上面的方法实现，我们创建一个对象的时候，下面的两种方式效果一样</span></span><br><span class="line"></span><br><span class="line">x = Foo(<span class="string">'bar'</span>)</span><br><span class="line">x = object_maker(Foo,<span class="string">'bar'</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="getitem"><a href="#getitem" class="headerlink" title="__getitem__"></a>__getitem__</h2><p>直接上示例吧！如果我写了一个类Cards表示一落牌，实例化为cards后我希望通过cards[3]来获取第位置为3的这张牌，这个怎么实现，很显然我的Card类不是列表也不是字典，怎么才能做到这一点呢？</p>
+<p>答案就是重写__getitem__这个魔法方法！</p>
+<p>此处我引用书中的一个很好的示例，一摞Python风格的纸牌</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> collections</span><br><span class="line"></span><br><span class="line">Card = collections.namedtuple(<span class="string">'Card'</span>, [<span class="string">'rank'</span>, <span class="string">'suit'</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FrenchDeck</span>:</span></span><br><span class="line">    ranks = [str(n) <span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">2</span>, <span class="number">11</span>)] + list(<span class="string">'JQKA'</span>)</span><br><span class="line">    suits = <span class="string">'spades diamonds clubs hearts'</span>.split()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self._cards = [Card(rank, suit) <span class="keyword">for</span> suit <span class="keyword">in</span> self.suits</span><br><span class="line">                       <span class="keyword">for</span> rank <span class="keyword">in</span> self.ranks]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> len(self._cards)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, position)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self._cards[position]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">my_card = Card(<span class="string">'7'</span>, <span class="string">'diamonds'</span>)</span><br></pre></td></tr></table></figure>
+<p>类的使用：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">my_cards = FrenchDeck()</span><br><span class="line">len(my_cards)</span><br><span class="line">52</span><br><span class="line">my_cards[2]</span><br><span class="line">Card(rank=<span class="string">'4'</span>, suit=<span class="string">'spades'</span>)</span><br><span class="line">my_cards[50]</span><br><span class="line">Card(rank=<span class="string">'K'</span>, suit=<span class="string">'hearts'</span>)</span><br><span class="line">my_cards[:3]</span><br><span class="line">[Card(rank=<span class="string">'2'</span>, suit=<span class="string">'spades'</span>), Card(rank=<span class="string">'3'</span>, suit=<span class="string">'spades'</span>), Card(rank=<span class="string">'4'</span>, suit=<span class="string">'spades'</span>)]</span><br><span class="line"><span class="keyword">for</span> card <span class="keyword">in</span> my_cards:</span><br><span class="line">    <span class="built_in">print</span>(card)</span><br><span class="line"></span><br><span class="line">Card(rank=<span class="string">'2'</span>, suit=<span class="string">'spades'</span>)</span><br><span class="line">Card(rank=<span class="string">'3'</span>, suit=<span class="string">'spades'</span>)</span><br><span class="line">Card(rank=<span class="string">'4'</span>, suit=<span class="string">'spades'</span>)</span><br><span class="line">Card(rank=<span class="string">'5'</span>, suit=<span class="string">'spades'</span>)</span><br><span class="line">Card(rank=<span class="string">'6'</span>, suit=<span class="string">'spades'</span>)</span><br><span class="line">Card(rank=<span class="string">'7'</span>, suit=<span class="string">'spades'</span>)</span><br><span class="line">Card(rank=<span class="string">'8'</span>, suit=<span class="string">'spades'</span>)</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h2 id="repr"><a href="#repr" class="headerlink" title="__repr__"></a>__repr__</h2><p>使用repr()函数就会调用类中的__repr__方法。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; repr(<span class="string">'s'</span>)</span><br><span class="line"><span class="string">"'s'"</span></span><br><span class="line">&gt;&gt;&gt; repr([1,2,3,4])</span><br><span class="line"><span class="string">'[1, 2, 3, 4]'</span></span><br><span class="line">&gt;&gt;&gt; repr(int)</span><br><span class="line"><span class="string">"&lt;class 'int'&gt;"</span></span><br><span class="line">&gt;&gt;&gt; repr(len)</span><br><span class="line"><span class="string">'&lt;built-in function len&gt;'</span></span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+<p>repr()这个内置函数的作用的时将一个对象用字符串的形式表达出来。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; class A:</span><br><span class="line">...     def __repr__(self):</span><br><span class="line">...             <span class="built_in">return</span> <span class="string">"你没事打印我干啥！"</span></span><br><span class="line">...</span><br><span class="line">&gt;&gt;&gt; <span class="built_in">print</span>(A)</span><br><span class="line">&lt;class <span class="string">'__main__.A'</span>&gt;</span><br><span class="line">&gt;&gt;&gt; a=A()</span><br><span class="line">&gt;&gt;&gt; <span class="built_in">print</span>(a)</span><br><span class="line">你没事打印我干啥！</span><br><span class="line">&gt;&gt;&gt; repr(A)</span><br><span class="line"><span class="string">"&lt;class '__main__.A'&gt;"</span></span><br><span class="line">&gt;&gt;&gt; repr(a)</span><br><span class="line"><span class="string">'你没事打印我干啥！'</span></span><br><span class="line">&gt;&gt;&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="str"><a href="#str" class="headerlink" title="__str__"></a>__str__</h2><p>还记得str()这个方法吧！没错str(a)就是在调用a对象的__str__这个方法，前提就是a对象的类中实现了这个魔法方法！print(a)时也会优先调用这个魔法方法，如果这个方法没有实现就会去调用__repr__这个魔法方法！</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">'A你还是调用repr了！'</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"A你没事直接打印我干啥！"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"A你看我和repr谁理你！"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"B你这下只有我了！"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a = A()</span><br><span class="line">repr(a)</span><br><span class="line">print(str(a))</span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line">b = B()</span><br><span class="line">repr(b)</span><br><span class="line">print(str(b))</span><br><span class="line">print(b)</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">A你还是调用repr了！</span><br><span class="line">A你看我和repr谁理你！</span><br><span class="line">A你看我和repr谁理你！</span><br><span class="line">B你这下只有我了！</span><br><span class="line">B你这下只有我了！</span><br></pre></td></tr></table></figure>
+<h2 id="bool"><a href="#bool" class="headerlink" title="__bool__"></a>__bool__</h2><p>这个魔法方法就比较重要了，我拿到一个变量x（一切都是对象）时，时常要判断其真假（if、while、not、or、and），实际上每次判断x真假时都是在调用bool(x)，而这个方法又是调用x.__bool__()的结果，重写这个方法时只能返回True或False。</p>
+<p>此处注意几点：</p>
+<ul>
+<li>默认情况下我们自定义的类的实例都是被认为为True的，除非这个类的__len__或__bool__有自己的实现；</li>
+<li>如果类有自己的__len__或__bool__实现，bool()会优先调用__bool__；</li>
+<li>如果不存在__bool__时，bool()会去调用__len__，若返回长度为0则bool()结果为False，否则为True。</li>
+</ul>
+<h1 id="魔术方法一览"><a href="#魔术方法一览" class="headerlink" title="魔术方法一览"></a>魔术方法一览</h1><h2 id="运算符无关的特殊方法"><a href="#运算符无关的特殊方法" class="headerlink" title="运算符无关的特殊方法"></a>运算符无关的特殊方法</h2><p> 字符串 /字节序列表示形式</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">数值转换</span><br><span class="line"></span><br><span class="line">```__abs__```、```__bool__```、```__complex__```、```__int__```、```__float__```、```__hash__```、```__index__</span><br></pre></td></tr></table></figure>
+<p>集合模拟</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">迭代枚举</span><br><span class="line"></span><br><span class="line">```__iter__```、```__reversed__```、```__next__</span><br></pre></td></tr></table></figure>
+<p>可调用模拟</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">上下文管理</span><br><span class="line"></span><br><span class="line">```__enter__```、```__exit__</span><br></pre></td></tr></table></figure>
+<p>实例创建和销毁</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">属性管理</span><br><span class="line"></span><br><span class="line">```__getattr__```、```__getattribute__```、```__setattr__```、```__delattr__```、```__dir__</span><br></pre></td></tr></table></figure>
+<p>属性描述符</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">跟类相关的服务</span><br><span class="line">```__prepare__```、```__instancecheck__```、```__subclasscheck__</span><br></pre></td></tr></table></figure>
+<h2 id="运算符相关的特殊方法"><a href="#运算符相关的特殊方法" class="headerlink" title="运算符相关的特殊方法"></a>运算符相关的特殊方法</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">类别 方法名和对应的运算符</span><br><span class="line">一元运算符</span><br><span class="line">__neg__ -、__pos__ +、__abs__ abs()</span><br><span class="line">众多比较运算符</span><br><span class="line">__lt__ &lt;、__le__ &lt;=、__eq__ ==、__ne__ !=、__gt__ &gt;、__ge__ &gt;=</span><br><span class="line">算术运算符</span><br><span class="line">__add__ +、__sub__ -、__mul__ *、__truediv__ /、__floordiv__ //、__mod__ %、__divmod__</span><br><span class="line">divmod()、__pow__ ** 或pow()、__round__ round()</span><br><span class="line">反向算术运算符</span><br><span class="line">__radd__、__rsub__、__rmul__、__rtruediv__、__rfloordiv__、__rmod__、__rdivmod__、__rpow__</span><br><span class="line">增量赋值算术运算符</span><br><span class="line">__iadd__、__isub__、__imul__、__itruediv__、__ifloordiv__、__imod__、__ipow__</span><br><span class="line">位运算符</span><br><span class="line">__invert__ ~、__lshift__ &lt;&lt;、__rshift__ &gt;&gt;、__and__ &amp;、__or__ |、__xor__ ^</span><br><span class="line">反向位运算符</span><br><span class="line">__rlshift__、__rrshift__、__rand__、__rxor__、__ror__</span><br><span class="line">增量赋值位运算符</span><br><span class="line">__ilshift__、__irshift__、__iand__、__ixor__、__ior__</span><br></pre></td></tr></table></figure>
+<p>内容都来自《流畅的Python》一书中的学习笔记和一丢丢自己的理解，放在这里方便日后查看。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+            <a href="/tags/Python魔术方法/" rel="tag"># Python魔术方法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/20/字典序排序/" rel="next" title="字典序排序">
+                <i class="fa fa-chevron-left"></i> 字典序排序
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/28/进制转换/" rel="prev" title="递归实现进制转换">
+                递归实现进制转换 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="ZhangThree">
+            
+              <p class="site-author-name" itemprop="name">ZhangThree</p>
+              <p class="site-description motion-element" itemprop="description">nothing but something!</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是魔术方法"><span class="nav-number">1.</span> <span class="nav-text">什么是魔术方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义"><span class="nav-number">1.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#功能描述"><span class="nav-number">1.2.</span> <span class="nav-text">功能描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命名规范"><span class="nav-number">1.3.</span> <span class="nav-text">命名规范</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常用的魔术方法和其调用规则"><span class="nav-number">2.</span> <span class="nav-text">常用的魔术方法和其调用规则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#len"><span class="nav-number">2.1.</span> <span class="nav-text">__len__</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#init"><span class="nav-number">2.2.</span> <span class="nav-text">__init__</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getitem"><span class="nav-number">2.3.</span> <span class="nav-text">__getitem__</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#repr"><span class="nav-number">2.4.</span> <span class="nav-text">__repr__</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#str"><span class="nav-number">2.5.</span> <span class="nav-text">__str__</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bool"><span class="nav-number">2.6.</span> <span class="nav-text">__bool__</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#魔术方法一览"><span class="nav-number">3.</span> <span class="nav-text">魔术方法一览</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#运算符无关的特殊方法"><span class="nav-number">3.1.</span> <span class="nav-text">运算符无关的特殊方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运算符相关的特殊方法"><span class="nav-number">3.2.</span> <span class="nav-text">运算符相关的特殊方法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhangThree</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'lzVD2DmFMAf3meHzqf7QUXwt-gzGzoHsz',
+        appKey: 'mcrt5cERhqrcI0fAEssexaIk',
+        placeholder: 'Nice to see you!',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

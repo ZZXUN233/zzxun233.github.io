@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Python,进制转换,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="递归实现进制转换9月26日的一个记不得什么公司的笔试题上，要求用递归的方式实现10进制转2进制整数，我回来后想了以下，感觉求进制数的流程都是一样的，不同的仅是转换后结果的表示不同（二进制数由“0”和“1”组成，十六进制由“0~9a~f”表示），我处理高于10进制数的表示做法是：  例如25转换为13进制数 25/13=1 余12  第一位为1 12/13=0 余12  第二位为ascill码为 (">
+<meta name="keywords" content="Python,进制转换">
+<meta property="og:type" content="article">
+<meta property="og:title" content="递归实现进制转换">
+<meta property="og:url" content="https://zzxunoo.github.io/2018/09/28/进制转换/index.html">
+<meta property="og:site_name" content="ZhangThree&#39;s Blog!">
+<meta property="og:description" content="递归实现进制转换9月26日的一个记不得什么公司的笔试题上，要求用递归的方式实现10进制转2进制整数，我回来后想了以下，感觉求进制数的流程都是一样的，不同的仅是转换后结果的表示不同（二进制数由“0”和“1”组成，十六进制由“0~9a~f”表示），我处理高于10进制数的表示做法是：  例如25转换为13进制数 25/13=1 余12  第一位为1 12/13=0 余12  第二位为ascill码为 (">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-05T12:56:03.817Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="递归实现进制转换">
+<meta name="twitter:description" content="递归实现进制转换9月26日的一个记不得什么公司的笔试题上，要求用递归的方式实现10进制转2进制整数，我回来后想了以下，感觉求进制数的流程都是一样的，不同的仅是转换后结果的表示不同（二进制数由“0”和“1”组成，十六进制由“0~9a~f”表示），我处理高于10进制数的表示做法是：  例如25转换为13进制数 25/13=1 余12  第一位为1 12/13=0 余12  第二位为ascill码为 (">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zzxunoo.github.io/2018/09/28/进制转换/">
+
+
+
+
+
+  <title>递归实现进制转换 | ZhangThree's Blog!</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?071b25a2baf9f91041b166e422279b98";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhangThree's Blog!</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">nothing but something!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.js"></script> 
+<link rel="stylesheet" href="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.css" type="text/css">
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zzxunoo.github.io/2018/09/28/进制转换/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZhangThree">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhangThree's Blog!">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">递归实现进制转换</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-28T03:17:54+08:00">
+                2018-09-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/编程/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/09/28/进制转换/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/09/28/进制转换/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="递归实现进制转换"><a href="#递归实现进制转换" class="headerlink" title="递归实现进制转换"></a>递归实现进制转换</h1><p>9月26日的一个记不得什么公司的笔试题上，要求用递归的方式实现10进制转2进制整数，我回来后想了以下，感觉求进制数的流程都是一样的，不同的仅是转换后结果的表示不同（二进制数由“0”和“1”组成，十六进制由“0~9a~f”表示），我处理高于10进制数的表示做法是：</p>
+<ul>
+<li>例如25转换为13进制数</li>
+<li>25/13=1 余12  第一位为1</li>
+<li>12/13=0 余12  第二位为ascill码为 (12+87=99) 对应的字符c</li>
+<li>所以25转换为13进制就是 <strong>1c</strong></li>
+</ul>
+<h2 id="Python的代码实现"><a href="#Python的代码实现" class="headerlink" title="Python的代码实现"></a>Python的代码实现</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">d2Other</span><span class="params">(num, base)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> num &lt; base:</span><br><span class="line">        <span class="keyword">return</span> str(num) <span class="keyword">if</span> num &lt;= <span class="number">9</span> <span class="keyword">else</span> chr(num + <span class="number">87</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">if</span> num % base &gt;= <span class="number">10</span>:</span><br><span class="line">            <span class="keyword">return</span> d2Other(num // base, base) + chr(num % base + <span class="number">87</span>)</span><br><span class="line">        <span class="keyword">return</span> d2Other(num // base, base) + str(num % base)</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="C-的代码实现"><a href="#C-的代码实现" class="headerlink" title="C++的代码实现"></a>C++的代码实现</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">d2Other</span><span class="params">(<span class="keyword">int</span> num, <span class="keyword">int</span> base)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (num &lt; base) &#123;</span><br><span class="line">        <span class="keyword">return</span> num &lt;= <span class="number">9</span> ? to_string(num) : <span class="built_in">string</span>(<span class="number">1</span>, (<span class="keyword">char</span>) (num + <span class="number">87</span>));</span><br><span class="line">    &#125; <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span> num % base &lt;= <span class="number">9</span> ? d2Other(base, num / base) + to_string(num % base) : d2Other(base, num / base) + <span class="built_in">string</span>(<span class="number">1</span>, (<span class="keyword">char</span>) num % base + <span class="number">87</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>两种代码的实现思路完全是一样的，调用方式都是d2Other(base,num)</p>
+<ul>
+<li>base为转换的目标进制</li>
+<li>num为要转换的数</li>
+<li>返回值都是转换后得到的string</li>
+</ul>
+<h2 id="Python的其它进制转回10进制的代码"><a href="#Python的其它进制转回10进制的代码" class="headerlink" title="Python的其它进制转回10进制的代码"></a>Python的其它进制转回10进制的代码</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">other2D</span><span class="params">(bitStr, base)</span>:</span></span><br><span class="line">    lens = len(str(bitStr))</span><br><span class="line">    num = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(lens):</span><br><span class="line">        <span class="keyword">if</span> ord(bitStr[i]) &lt; <span class="number">97</span>:</span><br><span class="line">            num += int(bitStr[i]) * base ** (lens - i - <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            num += (ord(bitStr[i]) - <span class="number">87</span>) * base ** (lens - i - <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> num</span><br></pre></td></tr></table></figure>
+<h3 id="简单的测试："><a href="#简单的测试：" class="headerlink" title="简单的测试："></a>简单的测试：</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    num1 = d2Other(<span class="number">23345236</span>, <span class="number">17</span>)</span><br><span class="line">    print(<span class="string">"23345236 转换为17进制数为：%s"</span> % num1)</span><br><span class="line">    print(<span class="string">"%s 从17进制还原到10进制数为：%s"</span> % (num1, other2D(num1, <span class="number">17</span>)))</span><br></pre></td></tr></table></figure>
+<h3 id="结果："><a href="#结果：" class="headerlink" title="结果："></a>结果：</h3><blockquote>
+<p>23345236 转换为17进制数为：g78c63<br>g78c63 从17进制还原到10进制数为：23345236</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+            <a href="/tags/进制转换/" rel="tag"># 进制转换</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/25/Python的魔术方法/" rel="next" title="Python的魔术方法">
+                <i class="fa fa-chevron-left"></i> Python的魔术方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/01/用sqlsoup快速煮ORM/" rel="prev" title="SQLAlchemy以及SqlSoup">
+                SQLAlchemy以及SqlSoup <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="ZhangThree">
+            
+              <p class="site-author-name" itemprop="name">ZhangThree</p>
+              <p class="site-description motion-element" itemprop="description">nothing but something!</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#递归实现进制转换"><span class="nav-number">1.</span> <span class="nav-text">递归实现进制转换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Python的代码实现"><span class="nav-number">1.1.</span> <span class="nav-text">Python的代码实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-的代码实现"><span class="nav-number">1.2.</span> <span class="nav-text">C++的代码实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Python的其它进制转回10进制的代码"><span class="nav-number">1.3.</span> <span class="nav-text">Python的其它进制转回10进制的代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简单的测试："><span class="nav-number">1.3.1.</span> <span class="nav-text">简单的测试：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结果："><span class="nav-number">1.3.2.</span> <span class="nav-text">结果：</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhangThree</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'lzVD2DmFMAf3meHzqf7QUXwt-gzGzoHsz',
+        appKey: 'mcrt5cERhqrcI0fAEssexaIk',
+        placeholder: 'Nice to see you!',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

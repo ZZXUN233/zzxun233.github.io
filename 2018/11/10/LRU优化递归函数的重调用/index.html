@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Python,LRU,lru_cache,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="递归调用问题本文就是讲了使用python的装饰器对递归函数中重复递归（相同与之前调用的函数相同时）的一种优化。基本上是参考《流畅的Python》一书中7.8节【标准库中的装饰器】的内容。">
+<meta name="keywords" content="Python,LRU,lru_cache">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LRU优化递归函数的重调用">
+<meta property="og:url" content="https://zzxunoo.github.io/2018/11/10/LRU优化递归函数的重调用/index.html">
+<meta property="og:site_name" content="ZhangThree&#39;s Blog!">
+<meta property="og:description" content="递归调用问题本文就是讲了使用python的装饰器对递归函数中重复递归（相同与之前调用的函数相同时）的一种优化。基本上是参考《流畅的Python》一书中7.8节【标准库中的装饰器】的内容。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://zzxunoo.github.io/2018/11/10/LRU优化递归函数的重调用/test.png">
+<meta property="og:image" content="https://zzxunoo.github.io/2018/11/10/LRU优化递归函数的重调用/test1.png">
+<meta property="og:image" content="https://zzxunoo.github.io/2018/11/10/LRU优化递归函数的重调用/test2.png">
+<meta property="og:updated_time" content="2018-11-13T08:03:47.419Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LRU优化递归函数的重调用">
+<meta name="twitter:description" content="递归调用问题本文就是讲了使用python的装饰器对递归函数中重复递归（相同与之前调用的函数相同时）的一种优化。基本上是参考《流畅的Python》一书中7.8节【标准库中的装饰器】的内容。">
+<meta name="twitter:image" content="https://zzxunoo.github.io/2018/11/10/LRU优化递归函数的重调用/test.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zzxunoo.github.io/2018/11/10/LRU优化递归函数的重调用/">
+
+
+
+
+
+  <title>LRU优化递归函数的重调用 | ZhangThree's Blog!</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?071b25a2baf9f91041b166e422279b98";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZhangThree's Blog!</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">nothing but something!</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.js"></script> 
+<link rel="stylesheet" href="https://cdn.bootcss.com/mermaid/6.0.0/mermaid.min.css" type="text/css">
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zzxunoo.github.io/2018/11/10/LRU优化递归函数的重调用/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZhangThree">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZhangThree's Blog!">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">LRU优化递归函数的重调用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-10T11:23:30Z">
+                2018-11-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/编程/" itemprop="url" rel="index">
+                    <span itemprop="name">编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/11/10/LRU优化递归函数的重调用/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/11/10/LRU优化递归函数的重调用/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="递归调用问题"><a href="#递归调用问题" class="headerlink" title="递归调用问题"></a>递归调用问题</h1><p>本文就是讲了使用python的装饰器对递归函数中重复递归（相同与之前调用的函数相同时）的一种优化。基本上是参考《流畅的Python》一书中7.8节【标准库中的装饰器】的内容。<br><a id="more"></a><br>还是那个简单的例子，斐波那契数列的递归实现：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fabonacci</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> n &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="keyword">return</span> fabonacci(n - <span class="number">2</span>) + fabonacci(n - <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>给这个简单的递归函数一个计时作用的装饰器如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">clock</span><span class="params">(func)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clocked</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">        t0 = time.perf_counter()</span><br><span class="line">        result = func(*args, **kwargs)  <span class="comment"># 被装饰函数的执行</span></span><br><span class="line">        elapsed = time.perf_counter() - t0</span><br><span class="line">        name = func.__name__</span><br><span class="line">        arg_str = <span class="string">', '</span>.join(repr(arg) <span class="keyword">for</span> arg <span class="keyword">in</span> args)</span><br><span class="line">        print(<span class="string">'[%0.8fs]%s(%s) -&gt; %r'</span> % (elapsed, name, arg_str, result))</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> clocked</span><br></pre></td></tr></table></figure>
+<p>运行加入装饰器运行测试：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@clock</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fabonacci</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> n &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="keyword">return</span> fabonacci(n - <span class="number">2</span>) + fabonacci(n - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    print(fabonacci(<span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<img src="/2018/11/10/LRU优化递归函数的重调用/test.png">
+<p>调用过程，在这个递归函数中，时间消耗巨大，原因就是同参数的函数被多次调用，这种情况很容易想到一种类似动态规划算法中保留子结果的机制来优化该递归函数：</p>
+<ul>
+<li>使用字典存储传入的函数参数（键）和函数的返回值（值）</li>
+<li>函数调用中先判断是否已经存有该参数的返回值，有就直接return该返回值，没有就存入该返回值</li>
+<li>此时面临的问题就是如何用编程来实现这种机制，在这个递归函数中没有临时变量可以获取</li>
+<li>这个时候可以用于扩展函数功能的装饰器就派上用途了</li>
+</ul>
+<p>以下以fabonacci这个递归函数定义了一个不完善的装饰器：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_cache</span><span class="params">(func)</span>:</span></span><br><span class="line">    cache = &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(n)</span>:</span></span><br><span class="line">        <span class="keyword">nonlocal</span>  cache</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 根据同一函数的参数情况建立返回值的字典映射</span></span><br><span class="line">        <span class="comment"># 根据一种传参数查询是否有存储返回值</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> n <span class="keyword">in</span> cache:</span><br><span class="line">            <span class="keyword">return</span> cache[n]     <span class="comment"># 如果查询到就返回该值</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            cache[n] = func(n)</span><br><span class="line">        <span class="keyword">return</span> cache[n]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">@do_cache  ######### 使用上面的装饰器</span></span><br><span class="line"><span class="meta">@clock</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fabonacci</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> n &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="keyword">return</span> fabonacci(n - <span class="number">2</span>) + fabonacci(n - <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>测试结果：</p>
+<img src="/2018/11/10/LRU优化递归函数的重调用/test1.png">
+<p>同样的函数，在用了装饰器做简单的优化后，调用次数和运行时间都得到了改善，但，这只是一个简单的实例，真实使用中，由于递归的次数可能很多，无法全部储存函数的字递归调用，这个时候就引出了LRU处理方式。</p>
+<blockquote>
+<p>LRU是Least Recently Used的缩写，即最近最少使用，常用于页面置换算法，是为虚拟页式存储管理服务的。</p>
+</blockquote>
+<p>LRU并不是什么很高端的算法，在此处恰好可以作为一种调用机制来实现：以有限的存储空间存储部分递归函数的返回值，从而减少后续递归调用中的重复递归次数。</p>
+<p>在functools模块中就有一个装饰器是利用LRU算法实现备忘功能，把耗时的函数返回值保存起来，避免传入相同的参数时重复计算，LRU限定了这个“备忘本”的长度不是无限的，一段时间后，很久没有被调用的函数存储结果会被丢弃。</p>
+<h1 id="一个重要的装饰器lru-cache"><a href="#一个重要的装饰器lru-cache" class="headerlink" title="一个重要的装饰器lru_cache"></a>一个重要的装饰器lru_cache</h1><p>同样是上面的例子：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> lru_cache</span><br><span class="line"></span><br><span class="line"><span class="meta">@lru_cache()</span></span><br><span class="line"><span class="meta">@clock</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fabonacci</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> n &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="keyword">return</span> fabonacci(n - <span class="number">2</span>) + fabonacci(n - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    print(fabonacci(<span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<p>测试结果：<br><img src="/2018/11/10/LRU优化递归函数的重调用/test2.png"></p>
+<p>调用次数都得到了优化，同时总的运行时间也更少了。下面来看看它这个装饰器具体做了什么事。</p>
+<p> <strong>需要注意</strong>的两点，这个装饰器在调用时 @lru_cache() 后面是更了双括号的，原因是这个装饰器可以接收配置参数，还有此处叠用了装饰器</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@lru_cache</span></span><br><span class="line"><span class="meta">@clock</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fabonacci</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>这样的叠放等同于运行：lru_cache(clock(fabonacci()))</p>
+<p>这样调用的意思是@lru_cache() 应用到 @clock返回的函数上，如果掉换顺序，打印的结果也发生了变化。从之前优化后的七次调用变成了11次调用，出现这个差异的原因我还没弄清楚，后面如果搞明白了就补以下这篇博客。。</p>
+<h2 id="lru-cache的底层原理"><a href="#lru-cache的底层原理" class="headerlink" title="lru_cache的底层原理"></a>lru_cache的底层原理</h2><p>functools.py 的源码在此处<a href="/2018/11/10/LRU优化递归函数的重调用/functools.py" title="functools.py">functools.py</a>，很多别的功能代码已经被我删除，保留了与lru_cache装饰器相关的代码。</p>
+<p>lru_cache实现中涉及的几个主要问题：</p>
+<ol>
+<li>cache缓存区的主要数据结构就是<strong>字典</strong></li>
+<li>根据参数<strong>构建字典的键</strong>，使用了一个_make_key的私有函数，使用不定数目参数和关键字参数（如果存在的话），一同</li>
+<li>记录缓存区的信息，使用namedtuple(“CacheInfo”, [“hits”, “misses”, “maxsize”, “currsize”]) 记录了【命中次数】，【未命中次数】，【缓存区最大空间】，【当前占用缓存区的大小】，四个属性</li>
+<li>LRU功能，只有在用户传入该装饰器的关键字参数maxsize，且maxsize不为0时才会使用LRU机制，默认情况下视作缓存区大小无限。</li>
+</ol>
+<p>lru_cache的完整签名是 functools.lru_cache(maxsize=128,typed=False)，maxsize的值应设为2的幂，typed如果为True，该装饰器会把被装饰函数的不同类型参数分开保存，另外lru_cache作用的函数参数必须是可散列的。</p>
+<h2 id="LRU的代码实现："><a href="#LRU的代码实现：" class="headerlink" title="LRU的代码实现："></a>LRU的代码实现：</h2><p>我在源码注释的基础上做讲解（翻译。。），如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">##在这段代码之前的部分很容易理解，此处才涉及LRU机制的实现，而主要用的数据结构是双向循环链表</span></span><br><span class="line"><span class="comment">#双向循环链表的定义</span></span><br><span class="line">root = []</span><br><span class="line">root[:] = [root,root,<span class="keyword">None</span>,<span class="keyword">None</span>]  <span class="comment">#对应的四个元素分别是PREV（上一状态，自己的一个引用）, NEXT（下一状态，同样是自己的引用）, KEY函数参数的键, RESULT函数对应返回值，</span></span><br><span class="line"></span><br><span class="line"><span class="comment">## ------如果该装饰器在被调用时传入关键字参数maxsize且不为0，则进入到此处调用：</span></span><br><span class="line"> <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span><span class="params">(*args, **kwds)</span>:</span></span><br><span class="line">            <span class="keyword">nonlocal</span> root, hits, misses, full</span><br><span class="line">            key = make_key(args, kwds, typed)  <span class="comment"># 根据函数的参数做hash获取键</span></span><br><span class="line">            <span class="keyword">with</span> lock:                  <span class="comment">#使用上下文管理器将对于链表的操作封装成线程安全的</span></span><br><span class="line">                link = cache_get(key)  <span class="comment"># 查找该键在缓存中是否存有值，注意此处的从字典获取的值为list或为None</span></span><br><span class="line">                <span class="keyword">if</span> link <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:   <span class="comment"># 查询到的情况，link就是参数键为key时的返回值</span></span><br><span class="line">                    <span class="comment"># 将指针移动到循环队列的前面</span></span><br><span class="line">                    <span class="comment">## PREV, NEXT, KEY, RESULT = 0, 1, 2, 3  # 这是函数闭包外定义的变量</span></span><br><span class="line">                    link_prev, link_next, _key, result = link</span><br><span class="line">                    link_prev[NEXT] = link_next <span class="comment">#更新链表的状态，查询之后就是下一状态</span></span><br><span class="line">                    link_next[PREV] = link_prev</span><br><span class="line">                    last = root[PREV]</span><br><span class="line">                    last[NEXT] = root[PREV] = link</span><br><span class="line">                    link[PREV] = last</span><br><span class="line">                    link[NEXT] = root</span><br><span class="line">                    hits += <span class="number">1</span>   <span class="comment"># 找到则命中次数加1</span></span><br><span class="line">                    <span class="keyword">return</span> result</span><br><span class="line">            result = user_function(*args, **kwds)</span><br><span class="line">            <span class="keyword">with</span> lock:</span><br><span class="line">                <span class="keyword">if</span> key <span class="keyword">in</span> cache:    <span class="comment"># 键找到的情况不做处理，因为上面已经处理了</span></span><br><span class="line">                    <span class="keyword">pass</span></span><br><span class="line">                <span class="keyword">elif</span> full:  <span class="comment">#缓存区满了的情况</span></span><br><span class="line">                    oldroot = root</span><br><span class="line">                    oldroot[KEY] = key</span><br><span class="line">                    oldroot[RESULT] = result</span><br><span class="line">                    <span class="comment"># 清空旧的指针并使其指向新的链表。 保持对旧key和旧结果的引用，以防止它们的引用计数在更新期间变为零。</span></span><br><span class="line">                    <span class="comment"># 防止被内存回收机制所清理掉。</span></span><br><span class="line">                    root = oldroot[NEXT]</span><br><span class="line">                    oldkey = root[KEY]</span><br><span class="line">                    oldresult = root[RESULT]</span><br><span class="line">                    root[KEY] = root[RESULT] = <span class="keyword">None</span></span><br><span class="line">                    <span class="comment"># 更新缓存字典</span></span><br><span class="line">                    <span class="keyword">del</span> cache[oldkey]</span><br><span class="line">                    <span class="comment"># 保存该键和对应函数的返回结果在新的缓存区中，此时缓存区刚好有一个空位</span></span><br><span class="line">                    cache[key] = oldroot</span><br><span class="line">                <span class="keyword">else</span>:  <span class="comment">#缓存区没有对应参数的返回值</span></span><br><span class="line">                    last = root[PREV]</span><br><span class="line">                    link = [last, root, key, result]            <span class="comment">#初始化一个新的状态，记录新状态，</span></span><br><span class="line">                    last[NEXT] = root[PREV] = cache[key] = link     <span class="comment"># 存入缓存中</span></span><br><span class="line">                    full = (cache_len() &gt;= maxsize) <span class="comment"># 判断缓存区是否满了，cache_len()是绑定了cache.__len__的方法</span></span><br><span class="line">                misses += <span class="number">1</span> <span class="comment">#未命中+1</span></span><br><span class="line">            <span class="keyword">return</span> result   <span class="comment">#返回函数的结果</span></span><br></pre></td></tr></table></figure>
+<h1 id="LRU详情以及其它的缓存策略"><a href="#LRU详情以及其它的缓存策略" class="headerlink" title="LRU详情以及其它的缓存策略"></a>LRU详情以及其它的缓存策略</h1><p>以下这个链接中写得很好，我就不搬运了。<br><a href="https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_Recently_Used" target="_blank" rel="noopener">Cache replacement policies</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+            <a href="/tags/LRU/" rel="tag"># LRU</a>
+          
+            <a href="/tags/lru-cache/" rel="tag"># lru_cache</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/06/关于Python中的函数/" rel="next" title="关于Python中的函数">
+                <i class="fa fa-chevron-left"></i> 关于Python中的函数
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/17/正则表达式常用记录/" rel="prev" title="正则表达式小抄">
+                正则表达式小抄 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="SOHUCS"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="ZhangThree">
+            
+              <p class="site-author-name" itemprop="name">ZhangThree</p>
+              <p class="site-description motion-element" itemprop="description">nothing but something!</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">59</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#递归调用问题"><span class="nav-number">1.</span> <span class="nav-text">递归调用问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一个重要的装饰器lru-cache"><span class="nav-number">2.</span> <span class="nav-text">一个重要的装饰器lru_cache</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#lru-cache的底层原理"><span class="nav-number">2.1.</span> <span class="nav-text">lru_cache的底层原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LRU的代码实现："><span class="nav-number">2.2.</span> <span class="nav-text">LRU的代码实现：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LRU详情以及其它的缓存策略"><span class="nav-number">3.</span> <span class="nav-text">LRU详情以及其它的缓存策略</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZhangThree</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'lzVD2DmFMAf3meHzqf7QUXwt-gzGzoHsz',
+        appKey: 'mcrt5cERhqrcI0fAEssexaIk',
+        placeholder: 'Nice to see you!',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
